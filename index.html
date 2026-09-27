@@ -1,0 +1,1676 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111412"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Haul Desk"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Haul Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F1F2EE; --panel:#FFFFFF; --panel2:#E8EAE4; --ink:#1A1F1B; --ink2:#48504B; --muted:#737B75; --line:#D6D9D1;
+  --accent:#D24E0C; --accent-ink:#FFFFFF; --accent-soft:#FBE4D6;
+  --green:#2C6650; --green-soft:#DAEAE1;
+  --good:#2B7A4C; --good-soft:#DDF0E4; --warn:#9A6212; --warn-soft:#F7EACF; --bad:#B8362A; --bad-soft:#F8DEDA;
+  --c-don:#2F7D5B; --c-rec:#3B6FB6; --c-land:#8C918E;
+  --shadow:0 1px 2px rgba(20,32,26,.06),0 8px 24px rgba(20,32,26,.08);
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#111412; --panel:#1A1E1B; --panel2:#242925; --ink:#E6EAE7; --ink2:#B4BCB7; --muted:#8A938D; --line:#2E3430;
+  --accent:#FF7B3D; --accent-ink:#1C0D05; --accent-soft:#3A2418;
+  --green:#7CC3A3; --green-soft:#1D2F27;
+  --good:#5DC48C; --good-soft:#18301F; --warn:#E3AA4E; --warn-soft:#342812; --bad:#F06C5C; --bad-soft:#3A1B17;
+  --c-don:#5DB38C; --c-rec:#6F9BE0; --c-land:#7E8581;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111412; --panel:#1A1E1B; --panel2:#242925; --ink:#E6EAE7; --ink2:#B4BCB7; --muted:#8A938D; --line:#2E3430;
+  --accent:#FF7B3D; --accent-ink:#1C0D05; --accent-soft:#3A2418;
+  --green:#7CC3A3; --green-soft:#1D2F27;
+  --good:#5DC48C; --good-soft:#18301F; --warn:#E3AA4E; --warn-soft:#342812; --bad:#F06C5C; --bad-soft:#3A1B17;
+  --c-don:#5DB38C; --c-rec:#6F9BE0; --c-land:#7E8581;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font:15px/1.45 var(--body);padding-inline:16px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num,.tab{font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding-block:0 96px}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin-inline:-16px;padding:12px 16px 0;border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;max-width:1080px;margin:0 auto}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0;flex:1}
+.brand h1{font:700 26px/1 var(--display);letter-spacing:.01em;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}
+.brand .blogo{height:40px;width:auto;border-radius:6px;flex:none;align-self:center}
+.brand:has(.blogo){align-items:center}
+.brand .dot{width:10px;height:10px;border-radius:2px;background:var(--accent);flex:none;transform:translateY(-2px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 14px;font-weight:600;font-size:14px;text-decoration:none;color:var(--ink);white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--ink2)}
+.btn.danger{color:var(--bad);border-color:var(--bad-soft)}
+.btn.danger.armed{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.iconbtn{width:38px;height:38px;padding:0;border-radius:8px}
+nav.tabs{display:flex;gap:4px;max-width:1080px;margin:10px auto 0;overflow-x:auto}
+nav.tabs button{border:0;background:none;padding:10px 12px 11px;font:600 17px/1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);border-bottom:3px solid transparent}
+nav.tabs button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.bottom{display:none}
+@media (max-width:720px){
+  nav.tabs{display:none}
+  header.top{padding-bottom:12px}
+  nav.bottom{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--panel);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))}
+  nav.bottom button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;font:600 13px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  nav.bottom button svg{width:22px;height:22px}
+  nav.bottom button[aria-current="true"]{color:var(--accent)}
+  .hide-sm{display:none}
+}
+
+/* layout */
+main{display:grid;gap:22px;padding-top:18px}
+.banner{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:14px;font-weight:500}
+.sec{display:grid;gap:10px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+h2{font:700 22px/1.1 var(--display);text-transform:uppercase;letter-spacing:.03em;margin:0}
+h3{font:600 18px/1.1 var(--display);text-transform:uppercase;letter-spacing:.04em;margin:0;color:var(--ink2)}
+.sub{color:var(--muted);font-size:13px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media (max-width:860px){.cols{grid-template-columns:1fr}}
+
+/* stat tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:720px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:2px}
+.tile .k{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tile .v{font:700 32px/1.05 var(--display);font-variant-numeric:tabular-nums}
+.tile .d{font-size:12px;color:var(--ink2)}
+.tile.hi .v{color:var(--accent)}
+
+/* cards & lists */
+.list{display:grid;gap:8px}
+.card{display:grid;gap:4px;text-align:left;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink)}
+button.card:hover,.card .open:hover{border-color:var(--muted)}
+.card .r1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card .name{font-weight:700;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .what{color:var(--ink2);font-size:14px}
+.card .meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--muted)}
+.card .meta .num{color:var(--ink);font-weight:600}
+.card.sched{grid-template-columns:auto 1fr;gap:4px 14px;padding:0;overflow:hidden}
+.card.sched .when{grid-row:span 2;background:var(--panel2);padding:12px;display:grid;align-content:center;justify-items:center;min-width:74px}
+.card.sched .when b{font:700 24px/1 var(--display)}
+.card.sched .when span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.card.sched .open{border:0;background:none;text-align:left;padding:12px 14px 0 0;display:grid;gap:4px;color:var(--ink)}
+.card.sched .acts{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 12px 0}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap;background:var(--panel2);color:var(--ink2)}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st-lead{background:var(--accent-soft);color:var(--accent)}
+.st-quoted{background:var(--warn-soft);color:var(--warn)}
+.st-booked{background:var(--green-soft);color:var(--green)}
+.st-done{background:var(--good-soft);color:var(--good)}
+.st-lost{background:var(--panel2);color:var(--muted)}
+.ex{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border:1px dashed var(--line);border-radius:4px;padding:0 5px}
+.todo{display:grid;grid-template-columns:4px 1fr auto;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px 10px 0;overflow:hidden;text-align:left;width:100%;color:var(--ink)}
+.todo:hover{border-color:var(--muted)}
+.todo .stripe{align-self:stretch;margin:-10px 0}
+.todo .t1{font-weight:600;font-size:14px}
+.todo .t2{font-size:13px;color:var(--muted)}
+.todo .why{font-size:12px;font-weight:600;white-space:nowrap}
+.pr-urgent .stripe{background:var(--bad)} .pr-urgent .why{color:var(--bad)}
+.pr-warn .stripe{background:var(--warn)} .pr-warn .why{color:var(--warn)}
+.pr-info .stripe{background:var(--green)} .pr-info .why{color:var(--green)}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:18px;color:var(--muted);text-align:center;font-size:14px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--ink2)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters button .n{opacity:.65;margin-left:4px}
+.search{width:100%;max-width:360px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+
+/* reports */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.monthnav{display:flex;align-items:center;gap:8px}
+.monthnav b{font:700 20px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;min-width:150px;text-align:center}
+.trend{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end;height:180px;padding-top:22px;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to top,transparent 0 44px,var(--line) 44px 45px)}
+.trend .col{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;outline-offset:3px}
+.trend .b{background:var(--green);opacity:.45;border-radius:4px 4px 0 0;min-height:2px}
+.trend .col.sel .b{opacity:1;background:var(--accent)}
+.trend .col .lab{position:absolute;bottom:calc(var(--h) + 4px);left:0;right:0;text-align:center;font:600 14px/1 var(--display);color:var(--ink)}
+.trend-x{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;text-align:center;font-size:12px;color:var(--muted);padding-top:6px}
+[data-tip]{position:relative}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;z-index:5;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);font:500 12px/1.3 var(--body);padding:6px 8px;border-radius:6px;white-space:nowrap;pointer-events:none}
+.trend .col[data-tip]:hover::after,.trend .col[data-tip]:focus-visible::after{bottom:auto;top:-4px;transform:translate(-50%,-100%)}
+.srcs{overflow-x:auto}
+.srcs table{width:100%;border-collapse:collapse;font-size:14px;min-width:460px}
+.srcs th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:600;padding:0 8px 8px}
+.srcs td{padding:7px 8px;border-top:1px solid var(--line)}
+.srcs td.r,.srcs th.r{text-align:right}
+.meter{height:12px;background:var(--panel2);border-radius:0 4px 4px 0;min-width:80px}
+.meter i{display:block;height:100%;background:var(--green);border-radius:0 4px 4px 0}
+.stack{display:flex;gap:2px;height:22px;border-radius:0 4px 4px 0;overflow:hidden;background:var(--panel)}
+.stack i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+/* sheet (editor) */
+.scrim{position:fixed;inset:0;background:rgba(10,14,12,.45);z-index:50;display:flex;justify-content:center;align-items:flex-start;padding:max(24px,env(safe-area-inset-top,0px)) 16px 24px;overflow-y:auto}
+.sheet{background:var(--bg);width:100%;max-width:760px;border-radius:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0}
+@media (max-width:720px){.scrim{padding:0}.sheet{border-radius:0;min-height:100%}}
+.sheet-h{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);border-radius:14px 14px 0 0}
+.sheet-h h2{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-b{padding:16px;display:grid;gap:18px}
+.sheet-f{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center;border-radius:0 0 14px 14px}
+.sheet-f .sp{flex:1}
+fieldset{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:14px;margin:0;display:grid;gap:12px;min-width:0}
+legend{font:700 16px/1 var(--display);text-transform:uppercase;letter-spacing:.06em;padding:0 6px;color:var(--ink2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:560px){.grid2,.grid3{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}}
+label.f{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em;min-width:0}
+label.f input,label.f select,label.f textarea{font-size:15px;text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink);padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%;min-width:0}
+label.f textarea{min-height:70px;resize:vertical}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+.check input{width:18px;height:18px;accent-color:var(--accent)}
+.segs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+@media (max-width:560px){.segs{grid-template-columns:repeat(3,1fr)}}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:grid;gap:1px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:7px 4px;background:var(--bg);cursor:pointer}
+.seg b{font:700 18px/1 var(--display)}
+.seg small{font-size:12px;color:var(--muted)}
+.seg input:checked+span{border-color:var(--accent);background:var(--accent-soft)}
+.seg input:checked+span small{color:var(--accent)}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.qty{display:grid;grid-template-columns:1fr 70px;gap:8px;align-items:center;font-size:14px}
+.qty input{padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);width:100%}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+@media (max-width:560px){.items{grid-template-columns:1fr}}
+.total{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--ink);color:var(--bg);border-radius:10px;padding:12px 14px}
+.total .v{font:700 36px/1 var(--display);font-variant-numeric:tabular-nums}
+.total .k{font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.7;font-weight:600}
+.total .btn{background:transparent;color:var(--bg);border-color:rgba(255,255,255,.3)}
+.profitline{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink2)}
+.profitline b{font-variant-numeric:tabular-nums;color:var(--ink)}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.ph{position:relative;aspect-ratio:1;max-width:100%;border-radius:8px;overflow:hidden;background:var(--panel2);border:0;padding:0}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph .tag{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:4px}
+.ph .x{position:absolute;right:4px;top:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:15px;line-height:1}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.contact{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+.contact .val{font-weight:600;user-select:all}
+.lightbox{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:24px}
+.lightbox img{max-height:100%;border-radius:6px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:90;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;font-weight:500;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.toast input{margin-top:6px;width:100%;padding:6px;border-radius:4px;border:0;color:#111}
+.set-table{width:100%;border-collapse:collapse;font-size:14px}
+.set-table td{padding:5px 0;border-top:1px solid var(--line);vertical-align:middle}
+.set-table td:last-child{width:120px;text-align:right}
+.set-table input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);text-align:right}
+.set-table input.l{text-align:left}
+.cust-row{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center}
+.importbox{border:1px dashed var(--accent);background:var(--accent-soft);border-radius:10px;padding:4px 14px}
+.importtoggle{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 0;font:700 17px/1.2 var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.importbody{display:grid;gap:10px;padding-bottom:12px}
+.importbody[hidden]{display:none}
+.importbody textarea{font-size:15px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%;min-height:120px;resize:vertical}
+.rcpt{z-index:75;align-items:flex-start;overflow-y:auto;padding:max(16px,env(safe-area-inset-top,0px)) 16px 16px}
+.rcpt-panel{background:var(--bg);border-radius:12px;padding:14px;width:100%;max-width:600px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.rcpt-h{display:flex;align-items:center;justify-content:space-between}
+.rcpt-canvas{width:100%;height:auto;display:block;border-radius:6px;border:1px solid var(--line)}
+.rcpt-acts{display:flex;gap:8px;flex-wrap:wrap}
+.logo-prev{width:120px;height:64px;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;background:#fff;overflow:hidden}
+.logo-prev img{max-width:100%;max-height:100%;object-fit:contain}
+.pl{width:100%;border-collapse:collapse;font-size:15px}
+.pl td{padding:8px 0;border-top:1px solid var(--line)}
+.pl td.num{text-align:right;font-weight:600;white-space:nowrap}
+.pl tr.tot td{border-top:2px solid var(--ink);font:700 22px/1.1 var(--display);text-transform:uppercase;letter-spacing:.03em}
+.neg{color:var(--ink2)} .pos{color:var(--good)}
+.pl tr.grp td{border-top:1px solid var(--line);padding:12px 0 2px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.pl tr.grp + tr td{border-top:0}
+.pl td.in{padding-left:14px}
+.pl tr.sub-tot td{border-top:1px solid var(--ink2);font-weight:700}
+.breakeven{margin:0;background:var(--green-soft);color:var(--ink);border-radius:8px;padding:10px 12px;font-size:14px}
+.ctype{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:4px}
+.ct-variable{background:var(--warn-soft);color:var(--warn)}
+.ct-monthly{background:var(--green-soft);color:var(--green)}
+.ct-onetime{background:var(--panel2);color:var(--ink2)}
+.ct-buyout{background:var(--accent-soft);color:var(--accent)}
+.ct-planned{background:transparent;color:var(--muted);border:1px dashed var(--line)}
+.lrow.planned{opacity:.7}
+.ledger{gap:0;max-height:360px;overflow-y:auto;border:1px solid var(--line);border-radius:8px}
+.lrow{display:grid;grid-template-columns:90px 1fr auto;gap:10px;align-items:center;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:9px 12px;color:var(--ink);font-size:14px}
+.lrow:last-child{border-bottom:0}
+.clickrow{cursor:pointer}
+.clickrow:hover td{background:var(--panel2)}
+.srcs tr.totrow td{border-top:2px solid var(--ink2);font-weight:700}
+.lrow:hover{background:var(--panel2)}
+.lrow .num{font-weight:600}
+.loading{padding:40px 0;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(12px);opacity:.6}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="bar">
+      <div class="brand"><span class="dot"></span><h1 id="bizname">Haul Desk</h1></div>
+      <button class="btn ghost iconbtn" data-act="nav" data-view="settings" aria-label="Settings" title="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+      <button class="btn primary" data-act="newJob">+ New lead</button>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </header>
+  <main id="main"><div class="loading">Loading your jobs…</div></main>
+</div>
+<nav class="bottom" id="bottomnav"></nav>
+<div id="sheet" hidden></div>
+<div id="lightbox" class="lightbox" hidden data-act="closeLightbox"><img id="lightimg" alt="Job photo"></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+/* ---------- config ---------- */
+const DEFAULT_SETTINGS = {
+  businessName: "",
+  reviewLink: "",
+  volumes: [
+    {key:"min", label:"Min", note:"Single item", price:95},
+    {key:"1/8", label:"1/8", price:149},
+    {key:"1/4", label:"1/4", price:229},
+    {key:"3/8", label:"3/8", price:299},
+    {key:"1/2", label:"1/2", price:379},
+    {key:"5/8", label:"5/8", price:439},
+    {key:"3/4", label:"3/4", price:499},
+    {key:"7/8", label:"7/8", price:549},
+    {key:"full", label:"Full", price:599}
+  ],
+  materials: [
+    {key:"household", label:"Household / furniture", mult:1},
+    {key:"yard", label:"Yard waste / brush", mult:0.9},
+    {key:"construction", label:"Construction / reno debris", mult:1.15},
+    {key:"heavy", label:"Heavy: concrete, dirt, shingles", mult:1.35}
+  ],
+  weights: [
+    {key:"light", label:"Light (boxes, bags)", add:0},
+    {key:"normal", label:"Normal", add:0},
+    {key:"heavy", label:"Heavy", add:60},
+    {key:"xheavy", label:"Very heavy (1+ ton)", add:150}
+  ],
+  access: [
+    {key:"curb", label:"Curbside / driveway", add:-20},
+    {key:"stairs", label:"Stairs (per flight)", add:35, perUnit:true},
+    {key:"carry", label:"Long carry (50+ ft)", add:40},
+    {key:"tight", label:"Attic / crawlspace / tight", add:75},
+    {key:"demo", label:"Disassembly / light demo", add:100}
+  ],
+  items: [
+    {key:"mattress", label:"Mattress / box spring", price:25},
+    {key:"tv", label:"TV / monitor", price:25},
+    {key:"freon", label:"Fridge / freezer / AC", price:50},
+    {key:"tire", label:"Tire", price:15},
+    {key:"paint", label:"Paint can", price:10},
+    {key:"piano", label:"Piano / safe / hot tub", price:150}
+  ],
+  dumpFullLoad: 110,
+  dumpSite: "Rutherford County Landfill",
+  dumpMin: 51.55, dumpMinLbs: 1000, dumpPerTon: 104.95, mattressDumpFee: 25, fullLoadLbs: 2000,
+  helpers: [],
+  fuelPerJob: 15,
+  costPerMile: 0.30,
+  ownerHourly: 25,
+  phone: "", email: "", city: "", logo: "",
+  taxRate: 0,
+  receiptNote: "Thank you for your business!"
+};
+const STATUSES = [
+  {key:"lead", label:"New lead"},
+  {key:"quoted", label:"Quoted"},
+  {key:"booked", label:"Booked"},
+  {key:"done", label:"Completed"},
+  {key:"lost", label:"Lost"}
+];
+const SOURCES = ["Friends & family","Referral","Yard sign","Facebook","Facebook Marketplace","Website form","Google","Phone call","Text","Repeat customer","Nextdoor","Organic","Other","Unknown"];
+const EXP_CATS = ["Vehicle & trailer","Tools & equipment","Supplies","Marketing","Phone & software","Insurance","Storage","Business setup","Dump fees","Fuel","Food","Uniforms","Other"];
+const INC_CATS = ["Resale","Scrap","Other income"];
+const COST_TYPES = [["variable","Variable — goes up with each job"],["monthly","Fixed — monthly bill"],["onetime","Fixed — equipment / one-time"]];
+const CAT_TYPE = {"Phone & software":"monthly","Insurance":"monthly","Storage":"monthly","Vehicle & trailer":"onetime","Tools & equipment":"onetime","Business setup":"onetime","Marketing":"onetime","Uniforms":"onetime","Supplies":"variable","Dump fees":"variable","Fuel":"variable","Food":"variable","Other":"variable"};
+const costTypeOf = l => l.costType || CAT_TYPE[l.category] || "variable";
+const TYPE_SHORT = {variable:"Variable", monthly:"Monthly bill", onetime:"Equipment / one-time", buyout:"Buyout"};
+EXP_CATS.push("Partner buyout"); CAT_TYPE["Partner buyout"]="buyout";
+COST_TYPES.push(["buyout","Partner buyout — not a business expense"]);
+/* planned = a scheduled payment not made yet; it doesn't count until marked paid */
+const ledgerIn = pre => state.ledger.filter(l=>!l.planned && (l.date||"").startsWith(pre));
+const isOpExp = l => l.kind!=="income" && costTypeOf(l)!=="buyout";
+const CUST_TYPES = ["Residential","Property manager","Realtor","Contractor","Commercial"];
+const PAY = ["Cash","Venmo","PayPal","Cash App","Check"];
+const dumpFee = (lbs, mattresses=0, s=state.settings) => {
+  lbs = Number(lbs)||0; if(!lbs && !mattresses) return 0;
+  const base = !lbs ? 0 : lbs <= (s.dumpMinLbs||1000) ? (s.dumpMin||0) : lbs/2000*(s.dumpPerTon||0);
+  return Math.round((base + mattresses*(s.mattressDumpFee||0))*100)/100;
+};
+const WINDOWS = ["8–10 AM","10 AM–12 PM","12–2 PM","2–4 PM","4–6 PM","Flexible"];
+const VOL_FRACTION = {min:.06,"1/8":.125,"1/4":.25,"3/8":.375,"1/2":.5,"5/8":.625,"3/4":.75,"7/8":.875,full:1};
+
+/* ---------- state ---------- */
+const state = { jobs:[], customers:[], ledger:[], settings:structuredClone(DEFAULT_SETTINGS), view:"today", pipe:"open", pipeQ:"", custQ:"", month:"", loaded:{jobs:false,customers:false,settings:false,ledger:false}, live:false };
+let DB = null, ASSETS = null, DOWNLOADS = null, SAMPLE = null;
+const FINE_POINTER = (()=>{ try{ return matchMedia("(hover:hover) and (pointer:fine)").matches; }catch{ return false; } })();
+
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = n => (n<0?"−$":"$") + Math.abs(Math.round(n||0)).toLocaleString();
+const pad = n => String(n).padStart(2,"0");
+const dstr = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today = () => dstr(new Date());
+const addDays = (s,n) => { const d=new Date(s+"T12:00:00"); d.setDate(d.getDate()+n); return dstr(d); };
+const daysBetween = (a,b) => Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);
+const fmtDate = s => s ? new Date(s+"T12:00:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"}) : "";
+const monthLabel = (m,opt={month:"long",year:"numeric"}) => { const [y,mo]=m.split("-").map(Number); return new Date(y,mo-1,1).toLocaleDateString(undefined,opt); };
+const shiftMonth = (m,n) => { const [y,mo]=m.split("-").map(Number); const d=new Date(y,mo-1+n,1); return `${d.getFullYear()}-${pad(d.getMonth()+1)}`; };
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const sum = (arr,f) => arr.reduce((a,x)=>a+(Number(f(x))||0),0);
+const cust = id => state.customers.find(c=>c.id===id);
+const first = name => (name||"").trim().split(/\s+/)[0] || "there";
+const biz = () => state.settings.businessName || "us";
+const jobDate = j => j.date || (j.createdAt||"").slice(0,10);
+const priceOf = j => Number(j.finalPrice) || Number(j.quoteTotal) || 0;
+const costOf = j => sum(Object.values(j.costs||{}), x=>x);
+const scrapOf = j => Number(j.scrap)||0;
+/* Dump fees are paid per trip, not per job. Each dump run (a dump fee on a job, or a "Dump fees" expense)
+   is split across the completed jobs since the previous run, weighted by job price. */
+let _dumpKey=null, _dumpAlloc=null;
+function dumpAllocation(){
+  const key = state.jobs.length+":"+state.ledger.length+":"+(state._rev||0);
+  if(_dumpKey===key && _dumpAlloc) return _dumpAlloc;
+  const done = state.jobs.filter(j=>j.status==="done").sort((a,b)=>jobDate(a)<jobDate(b)?-1:jobDate(a)>jobDate(b)?1:0);
+  const byDate = {};
+  state.jobs.forEach(j=>{ const d=Number(j.costs?.dump)||0; if(d){ const k=jobDate(j); byDate[k]=(byDate[k]||0)+d; } });
+  state.ledger.forEach(l=>{ if(l.kind!=="income" && l.category==="Dump fees" && l.date){ byDate[l.date]=(byDate[l.date]||0)+(Number(l.amount)||0); } });
+  const est={}; let i=0, carry=0, allocRev=0, allocAmt=0;
+  for(const d of Object.keys(byDate).sort()){
+    const win=[]; while(i<done.length && jobDate(done[i])<=d){ win.push(done[i]); i++; }
+    const amt = byDate[d]+carry, w = sum(win,priceOf);
+    if(!win.length || !w){ carry = amt; continue; }
+    carry = 0;
+    win.forEach(j=>{ est[j.id]={amt: amt*priceOf(j)/w, run:d, n:win.length, runAmt:amt}; });
+    allocRev += w; allocAmt += amt;
+  }
+  const ratio = allocRev ? allocAmt/allocRev : 0;
+  for(; i<done.length; i++){ const j=done[i]; est[j.id]={amt: priceOf(j)*ratio, pending:true}; }
+  _dumpKey=key; _dumpAlloc={est, ratio};
+  return _dumpAlloc;
+}
+function volumeDumpEst(q, s=state.settings){
+  const f=VOL_FRACTION[q?.volume]; if(!f) return null;
+  const mf={household:1,yard:.8,construction:1.5,heavy:3}[q.material]||1, wf={light:.6,normal:1,heavy:1.4,xheavy:2}[q.weight]||1;
+  return dumpFee(Math.round(f*(s.fullLoadLbs||2000)*mf*wf), Number(q.items?.mattress)||0);
+}
+function dumpEstOf(j){
+  const a = dumpAllocation(), e = a.est[j.id];
+  if(e) return e;
+  const v = volumeDumpEst(j.quote);
+  if(v!=null) return {amt:v, fromVolume:true};
+  return {amt: priceOf(j)*a.ratio, pending:true};
+}
+const nonDumpCostOf = j => costOf(j) - (Number(j.costs?.dump)||0);
+const jobProfitEstOf = j => priceOf(j) + scrapOf(j) - nonDumpCostOf(j) - dumpEstOf(j).amt;
+const jobProfitOf = j => priceOf(j) + scrapOf(j) - costOf(j);
+const wearOf = j => (Number(j.miles)||0) * (Number(state.settings.costPerMile)||0);
+const trueProfitOf = j => jobProfitOf(j) - wearOf(j) - (Number(j.hours)||0)*(Number(state.settings.ownerHourly)||0);
+const quoteLines = (q, s=state.settings) => {
+  const out = []; if(!q || !q.volume) return out;
+  const v = s.volumes.find(x=>x.key===q.volume); if(!v) return out;
+  const adj = useAdj(s), one = singleItem(q, s);
+  if(one){ out.push({label:`Single-item pickup — ${one.label.toLowerCase()}`, amount:Math.max(v.price, one.price)}); }
+  else {
+    const m = adj ? (s.materials.find(x=>x.key===q.material) || {mult:1,label:""}) : {mult:1,label:""};
+    out.push({label:`Junk removal — ${v.key==="min"?"minimum load":v.label+" trailer load"}${m.label?` (${m.label.split(":")[0].toLowerCase()})`:""}`, amount:v.price*m.mult});
+    const w = adj && s.weights.find(x=>x.key===q.weight); if(w && w.add) out.push({label:`Weight: ${w.label.toLowerCase()}`, amount:w.add});
+    s.items.forEach(it=>{ const n=Number(q.items?.[it.key])||0; if(n) out.push({label:`${it.label} × ${n}`, amount:n*it.price}); });
+  }
+  if(adj) (q.access||[]).forEach(k=>{ const a=s.access.find(x=>x.key===k); if(!a||!a.add) return; const n=a.perUnit?Math.max(1,Number(q.flights)||1):1; out.push({label: a.perUnit?`${a.label.replace(/\s*\(.*\)/,"")} × ${n}`:a.label, amount:a.add*n}); });
+  if(Number(q.adjust)) out.push({label:"Adjustment", amount:Number(q.adjust)});
+  return out;
+};
+const statusLabel = k => (STATUSES.find(s=>s.key===k)||{}).label || k;
+const chip = k => `<span class="chip st-${esc(k)}">${esc(statusLabel(k))}</span>`;
+const mapUrl = a => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(a);
+const shortAddr = a => (a||"").split(",")[0];
+
+const useAdj = (s=state.settings) => s.useAdjustments !== false;
+const singleItemNote = () => { const mn = state.settings.volumes.find(v=>v.key==="min"); return `<p class="sub" style="margin:0">Single-item pickup: pick “Min” and enter 1 item. It's charged the higher of the ${money(mn?.price||0)} minimum or that item's fee.</p>`; };
+const singleItem = (q, s=state.settings) => {
+  if(q.volume!=="min") return null;
+  const picked = s.items.filter(it=>Number(q.items?.[it.key])>0);
+  return picked.length===1 && Number(q.items[picked[0].key])===1 ? picked[0] : null;
+};
+function calcQuote(q, s=state.settings){
+  if(!q || !q.volume) return 0;
+  const v = s.volumes.find(x=>x.key===q.volume); if(!v) return 0;
+  const adj = useAdj(s), one = singleItem(q, s);
+  let t;
+  if(one) t = Math.max(v.price, one.price);
+  else {
+    const m = adj ? (s.materials.find(x=>x.key===q.material) || {mult:1}) : {mult:1};
+    const w = adj ? (s.weights.find(x=>x.key===q.weight) || {add:0}) : {add:0};
+    t = v.price*m.mult + w.add;
+    s.items.forEach(it=>{ t += (Number(q.items?.[it.key])||0)*it.price; });
+  }
+  if(adj) (q.access||[]).forEach(k=>{ const a=s.access.find(x=>x.key===k); if(a) t += a.perUnit ? a.add*Math.max(1,Number(q.flights)||1) : a.add; });
+  t += Number(q.adjust)||0;
+  return Math.max(0, Math.round(t/5)*5);
+}
+
+/* ---------- persistence ---------- */
+async function put(col, obj){
+  const {id, ...body} = JSON.parse(JSON.stringify(obj));
+  if(DB){
+    try{ await DB.collection(col).doc(id).set(body); }
+    catch(e){ toast(e?.code==="quota_exceeded" ? "Storage is full — remove old example data or lost leads in Settings." : "Couldn't save. Check your connection and try again."); throw e; }
+  } else {
+    _dumpKey=null; const arr = state[col]; const i = arr.findIndex(x=>x.id===id);
+    if(i>=0) arr[i]={id,...body}; else arr.push({id,...body});
+    render();
+  }
+}
+async function remove(col, id){
+  if(DB){ await DB.collection(col).doc(id).delete(); }
+  else { _dumpKey=null; state[col] = state[col].filter(x=>x.id!==id); render(); }
+}
+async function saveSettingsDoc(s){
+  if(DB) await DB.doc("settings/main").set(JSON.parse(JSON.stringify(s)));
+  else { state.settings = s; render(); }
+}
+
+/* ---------- toast & copy ---------- */
+let toastT;
+function toast(msg, copyText){
+  const t=$("#toast"); t.innerHTML = esc(msg) + (copyText!=null ? `<input id="toast-copy" readonly value="${esc(copyText)}">` : "");
+  t.hidden=false; clearTimeout(toastT);
+  if(copyText!=null){ const i=$("#toast-copy"); i.focus(); i.select(); }
+  toastT=setTimeout(()=>t.hidden=true, copyText!=null?9000:2400);
+}
+function copyText(txt, label="Copied"){
+  try{
+    navigator.clipboard.writeText(txt).then(()=>toast(label), ()=>toast("Copy blocked — select the text below:", txt));
+  }catch{ toast("Copy blocked — select the text below:", txt); }
+}
+const quoteMsg = (j,total) => { const c=cust(j.customerId), tx=Number(state.settings.taxRate)||0; return `Hi ${first(c?.name)}, thanks for reaching out to ${biz()}! Your quote for ${j.title||"junk removal"} is ${money(total)}${tx?` plus ${tx}% sales tax`:""} — that covers loading, hauling and disposal. Want me to lock in a time?`; };
+const reviewMsg = j => { const c=cust(j.customerId); return `Thanks again for choosing ${biz()}, ${first(c?.name)}! If you have a minute, a quick review would really help our small business${state.settings.reviewLink?": "+state.settings.reviewLink:"."}`; };
+
+/* ---------- nav ---------- */
+const ICONS = {
+  today:'<path d="M3 10h18M8 3v4M16 3v4"/><rect x="3" y="5" width="18" height="16" rx="2"/>',
+  pipeline:'<path d="M4 5h16M6 12h12M9 19h6"/>',
+  schedule:'<path d="M3 16V7h11v9"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+  customers:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 3.5a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/>',
+  reports:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'
+};
+const VIEWS = [["today","Today"],["pipeline","Pipeline"],["schedule","Schedule"],["customers","Customers"],["reports","Reports"]];
+function renderNav(){
+  $("#tabs").innerHTML = VIEWS.map(([k,l])=>`<button data-act="nav" data-view="${k}" aria-current="${state.view===k}">${l}</button>`).join("") + `<button data-act="nav" data-view="settings" aria-current="${state.view==="settings"}">Settings</button>`;
+  $("#bottomnav").innerHTML = VIEWS.map(([k,l])=>`<button data-act="nav" data-view="${k}" aria-current="${state.view===k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}</button>`).join("");
+  $("#bizname").textContent = state.settings.businessName || "Haul Desk";
+  const dot = $(".brand .dot, .brand .blogo"), lg = state.settings.logo;
+  if(lg && !(dot.tagName==="IMG" && dot.dataset.id===lg)){ const im=document.createElement("img"); im.className="blogo"; im.alt=""; im.dataset.id=lg; im.src=blobUrl(lg); dot.replaceWith(im); }
+  else if(!lg && dot.tagName==="IMG"){ const sp=document.createElement("span"); sp.className="dot"; dot.replaceWith(sp); }
+}
+
+/* ---------- components ---------- */
+function jobCard(j){
+  const c = cust(j.customerId), p = priceOf(j);
+  return `<button class="card" data-act="openJob" data-id="${esc(j.id)}">
+    <span class="r1"><span class="name">${esc(c?.name||"No customer")}</span>${chip(j.status)}</span>
+    <span class="what">${esc(j.title||"Junk removal")}</span>
+    <span class="meta">${j.date?`<span>${fmtDate(j.date)}${j.window?" · "+esc(j.window):""}</span>`:""}${j.address?`<span>${esc(shortAddr(j.address))}</span>`:""}${p?`<span class="num">${money(p)}${j.status==="done"&&!j.paid?" unpaid":""}</span>`:""}<span>${esc(j.source||"")}</span>${j.example?'<span class="ex">Example</span>':""}</span>
+  </button>`;
+}
+function tile(k,v,d,hi){ return `<div class="tile${hi?" hi":""}"><span class="k">${k}</span><span class="v">${v}</span>${d?`<span class="d">${d}</span>`:""}</div>`; }
+
+function followUps(){
+  const t = today(), out=[];
+  for(const j of state.jobs){
+    const c = cust(j.customerId), who = c?.name || "No customer", age = daysBetween((j.createdAt||t).slice(0,10), t);
+    if((j.status==="lead"||j.status==="quoted") && j.followUp && j.followUp<=t)
+      out.push({j, pr: j.followUp<t?"urgent":"warn", why: j.followUp<t?`Follow-up ${daysBetween(j.followUp,t)}d late`:"Follow up today", t1:who, t2:j.title||"Follow up"});
+    else if(j.status==="lead" && !j.followUp && age>=1)
+      out.push({j, pr:"urgent", why:`New lead · ${age}d`, t1:who, t2:"Not quoted yet — "+(j.title||"send a quote")});
+    else if(j.status==="quoted" && !j.followUp && age>=3)
+      out.push({j, pr:"warn", why:`Quote ${age}d old`, t1:who, t2:`${money(priceOf(j))} quote — check in`});
+    if(j.status==="booked" && j.date && j.date<t)
+      out.push({j, pr:"urgent", why:"Date passed", t1:who, t2:"Mark complete & log payment"});
+    if(j.status==="done" && !j.paid)
+      out.push({j, pr:"urgent", why:"Unpaid", t1:who, t2:`${money(priceOf(j))} to collect`});
+    if(j.status==="done" && j.paid && !j.reviewAsked && daysBetween(jobDate(j),t)<=7)
+      out.push({j, pr:"info", why:"Ask for review", t1:who, t2:j.title||"Completed job"});
+  }
+  for(const c of state.customers){
+    if(c.type && c.type!=="Residential"){
+      const jobs = state.jobs.filter(j=>j.customerId===c.id && j.status==="done");
+      const last = jobs.map(jobDate).sort().pop();
+      if(last && daysBetween(last,t)>=45 && !state.jobs.some(j=>j.customerId===c.id && ["lead","quoted","booked"].includes(j.status)))
+        out.push({c, pr:"info", why:`${daysBetween(last,t)}d since last job`, t1:c.name, t2:`${c.type} — check in for new work`});
+    }
+  }
+  for(const l of state.ledger){
+    if(!l.planned || !l.date) continue;
+    const dd = daysBetween(t, l.date);
+    if(dd<=5) out.push({l, pr: dd<0?"urgent":"warn", why: dd<0?`${-dd}d overdue`:dd===0?"Due today":`Due in ${dd}d`, t1: l.description||"Scheduled payment", t2:`${money(l.amount)} on ${fmtDate(l.date)} — tap to mark paid`});
+  }
+  const rank={urgent:0,warn:1,info:2};
+  return out.sort((a,b)=>rank[a.pr]-rank[b.pr]);
+}
+function todoRow(f){
+  const act = f.j ? `data-act="openJob" data-id="${esc(f.j.id)}"` : f.l ? `data-act="openLedger" data-id="${esc(f.l.id)}"` : `data-act="openCust" data-id="${esc(f.c.id)}"`;
+  return `<button class="todo pr-${f.pr}" ${act}><span class="stripe"></span><span><span class="t1">${esc(f.t1)}</span><br><span class="t2">${esc(f.t2)}</span></span><span class="why">${esc(f.why)}</span></button>`;
+}
+
+/* ---------- views ---------- */
+function viewToday(){
+  const t=today(), m=t.slice(0,7);
+  const doneM = state.jobs.filter(j=>j.status==="done" && jobDate(j).startsWith(m));
+  const paidM = doneM.filter(j=>j.paid);
+  const rev = sum(paidM,priceOf), ledM = ledgerIn(m);
+  const overhead = sum(ledM.filter(isOpExp),l=>l.amount), otherInc = sum(ledM.filter(l=>l.kind==="income"),l=>l.amount);
+  const prof = sum(paidM,jobProfitOf) + otherInc - overhead;
+  const openQ = state.jobs.filter(j=>j.status==="quoted");
+  const booked = state.jobs.filter(j=>j.status==="booked").sort((a,b)=>(a.date||"9")>(b.date||"9")?1:-1);
+  const todays = booked.filter(j=>j.date===t);
+  const upcoming = booked.filter(j=>!j.date || j.date>t).slice(0,6);
+  const fu = followUps();
+  return `
+  <section class="tiles">
+    ${tile("Collected · "+monthLabel(m,{month:"short"}), money(rev), `${paidM.length} paid job${paidM.length===1?"":"s"}`, true)}
+    ${tile("Net profit", money(prof), `after job costs${overhead?` & ${money(overhead)} business expenses`:""}`)}
+    ${tile("Booked ahead", booked.length, money(sum(booked,priceOf))+" on the calendar")}
+    ${tile("Open quotes", openQ.length, money(sum(openQ,priceOf))+" waiting on a yes")}
+  </section>
+  <div class="cols">
+    <section class="sec">
+      <div class="sec-h"><h2>Follow up</h2><span class="sub">${fu.length} to do</span></div>
+      <div class="list">${fu.length? fu.map(todoRow).join("") : `<div class="empty">You're caught up. New leads and quotes that need a nudge show up here.</div>`}</div>
+    </section>
+    <section class="sec">
+      <div class="sec-h"><h2>Today</h2><span class="sub">${fmtDate(t)}</span></div>
+      <div class="list">${todays.length? todays.map(schedCard).join("") : `<div class="empty">No jobs booked today.</div>`}</div>
+      <div class="sec-h" style="margin-top:8px"><h3>Coming up</h3><button class="btn ghost sm" data-act="nav" data-view="schedule">Full schedule →</button></div>
+      <div class="list">${upcoming.length? upcoming.map(schedCard).join("") : `<div class="empty">Nothing booked yet.</div>`}</div>
+    </section>
+  </div>`;
+}
+
+function schedCard(j){
+  const c = cust(j.customerId), d = j.date ? new Date(j.date+"T12:00:00") : null;
+  return `<div class="card sched">
+    <div class="when">${d?`<span>${d.toLocaleDateString(undefined,{weekday:"short"})}</span><b>${d.getDate()}</b><span>${d.toLocaleDateString(undefined,{month:"short"})}</span>`:`<span>No</span><b>?</b><span>date</span>`}</div>
+    <button class="open" data-act="openJob" data-id="${esc(j.id)}">
+      <span class="r1" style="display:flex;justify-content:space-between;gap:8px;width:100%"><span class="name" style="font-weight:700">${esc(c?.name||"No customer")}</span><span class="num" style="font-weight:700">${priceOf(j)?money(priceOf(j)):""}</span></span>
+      <span class="what" style="color:var(--ink2);font-size:14px">${esc(j.title||"Junk removal")}${j.quote?.volume?` · ${esc(j.quote.volume)} load`:""}</span>
+      <span class="meta" style="font-size:13px;color:var(--muted)">${esc(j.window||"")}${j.window&&j.address?" · ":""}${esc(j.address||"")}${j.example?' <span class="ex">Example</span>':""}</span>
+    </button>
+    <div class="acts">
+      ${j.address?`<a class="btn sm" href="${mapUrl(j.address)}" target="_blank" rel="noopener">Directions</a>`:""}
+      ${c?.phone?`<button class="btn sm" data-act="copy" data-text="${esc(c.phone)}">Copy ${esc(c.phone)}</button>`:""}
+      <button class="btn sm" data-act="quickDone" data-id="${esc(j.id)}">Complete</button>
+    </div>
+  </div>`;
+}
+
+function viewPipeline(){
+  const q = state.pipe, s = state.pipeQ.toLowerCase();
+  const counts = Object.fromEntries(STATUSES.map(x=>[x.key, state.jobs.filter(j=>j.status===x.key).length]));
+  const openN = counts.lead+counts.quoted+counts.booked;
+  let jobs = state.jobs.filter(j => q==="all" ? true : q==="open" ? ["lead","quoted","booked"].includes(j.status) : j.status===q);
+  if(s) jobs = jobs.filter(j => [cust(j.customerId)?.name, j.title, j.address, j.source, j.notes].join(" ").toLowerCase().includes(s));
+  const order = {lead:0,quoted:1,booked:2,done:3,lost:4};
+  jobs.sort((a,b)=> order[a.status]-order[b.status] || ((b.createdAt||"")>(a.createdAt||"")?1:-1));
+  const btn = (k,l,n) => `<button data-act="pipe" data-k="${k}" aria-pressed="${q===k}">${l}<span class="n">${n}</span></button>`;
+  return `<section class="sec">
+    <div class="toolbar"><h2>Pipeline</h2><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end"><input class="search" id="pipe-q" type="search" placeholder="Search name, address, notes…" value="${esc(state.pipeQ)}"><button class="btn" data-act="importJob">Import from email</button></div></div>
+    <div class="filters">${btn("open","Open",openN)}${STATUSES.map(x=>btn(x.key,x.label,counts[x.key])).join("")}${btn("all","All",state.jobs.length)}</div>
+    <div class="list">${jobs.length? jobs.map(jobCard).join("") : `<div class="empty">No jobs here yet. Tap “+ New lead” when the phone rings.</div>`}</div>
+  </section>`;
+}
+
+function viewSchedule(){
+  const t = today(), wk = addDays(t,7);
+  const booked = state.jobs.filter(j=>j.status==="booked").sort((a,b)=>((a.date||"9")+(a.window||""))>((b.date||"9")+(b.window||""))?1:-1);
+  const groups = [
+    ["Overdue — mark complete", booked.filter(j=>j.date && j.date<t)],
+    ["Today", booked.filter(j=>j.date===t)],
+    ["Tomorrow", booked.filter(j=>j.date===addDays(t,1))],
+    ["This week", booked.filter(j=>j.date>addDays(t,1) && j.date<=wk)],
+    ["Later", booked.filter(j=>j.date>wk)],
+    ["Booked, no date yet", booked.filter(j=>!j.date)]
+  ].filter(g=>g[1].length);
+  return `<section class="sec">
+    <div class="sec-h"><h2>Schedule</h2><span class="sub">${booked.length} booked · ${money(sum(booked,priceOf))}</span></div>
+    ${groups.length? groups.map(([h,js])=>`<div class="sec"><h3>${h}</h3><div class="list">${js.map(schedCard).join("")}</div></div>`).join("") : `<div class="empty">No booked jobs. Set a job's status to “Booked” and give it a date to see it here.</div>`}
+  </section>`;
+}
+
+function custStats(c){
+  const jobs = state.jobs.filter(j=>j.customerId===c.id);
+  const done = jobs.filter(j=>j.status==="done");
+  return { jobs, done, value: sum(done.filter(j=>j.paid),priceOf), last: done.map(jobDate).sort().pop() };
+}
+function viewCustomers(){
+  const s = state.custQ.toLowerCase();
+  let list = state.customers.map(c=>({c, ...custStats(c)}));
+  if(s) list = list.filter(x=>[x.c.name,x.c.phone,x.c.email,x.c.address,x.c.type].join(" ").toLowerCase().includes(s));
+  list.sort((a,b)=>b.value-a.value || (a.c.name||"").localeCompare(b.c.name||""));
+  const repeat = list.filter(x=>x.done.length>=2).length;
+  return `<section class="sec">
+    <div class="toolbar"><h2>Customers</h2><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end"><input class="search" id="cust-q" type="search" placeholder="Search customers…" value="${esc(state.custQ)}"><button class="btn" data-act="newCust">+ Customer</button></div></div>
+    <p class="sub" style="margin:0">${state.customers.length} customers · ${repeat} repeat · sorted by lifetime value</p>
+    <div class="list">${list.length? list.map(x=>`<button class="card" data-act="openCust" data-id="${esc(x.c.id)}">
+      <span class="r1"><span class="name">${esc(x.c.name)}</span><span class="num" style="font-weight:700">${money(x.value)}</span></span>
+      <span class="meta"><span>${esc(x.c.type||"Residential")}</span><span>${x.done.length} job${x.done.length===1?"":"s"} done</span>${x.done.length>=2?'<span style="color:var(--green);font-weight:600">Repeat</span>':""}${x.last?`<span>Last: ${fmtDate(x.last)}</span>`:""}${x.c.phone?`<span>${esc(x.c.phone)}</span>`:""}${x.c.example?'<span class="ex">Example</span>':""}</span>
+    </button>`).join("") : `<div class="empty">No customers yet. They're added automatically when you save a new lead.</div>`}</div>
+  </section>`;
+}
+
+function viewReports(){
+  const m = state.month || today().slice(0,7);
+  const inM = j => jobDate(j).startsWith(m);
+  const done = state.jobs.filter(j=>j.status==="done" && inM(j));
+  const paid = done.filter(j=>j.paid);
+  const rev = sum(paid,priceOf), cost = sum(paid,costOf), jobScrap = sum(paid,scrapOf), prof = rev+jobScrap-cost;
+  const ledIn = ledgerIn;
+  const led = ledIn(m);
+  const ledList = state.ledger.filter(l=>(l.date||"").startsWith(m)).sort((a,b)=>(b.date||"")>(a.date||"")?1:-1);
+  const overhead = sum(led.filter(isOpExp),l=>l.amount), otherInc = sum(led.filter(l=>l.kind==="income"),l=>l.amount);
+  const buyM = sum(led.filter(l=>costTypeOf(l)==="buyout"),l=>l.amount);
+  const buyAll = state.ledger.filter(l=>costTypeOf(l)==="buyout"), buyLeft = buyAll.filter(l=>l.planned), buyNext = buyLeft.sort((a,b)=>a.date>b.date?1:-1)[0];
+  const net = prof + otherInc - overhead;
+  const yr = m.slice(0,4), paidY = state.jobs.filter(j=>j.status==="done"&&j.paid&&jobDate(j).startsWith(yr)), ledY = ledIn(yr);
+  const revY = sum(paidY,priceOf), netY = sum(paidY,jobProfitOf) + sum(ledY.filter(l=>l.kind==="income"),l=>l.amount) - sum(ledY.filter(isOpExp),l=>l.amount);
+  const exp = led.filter(isOpExp);
+  const byType = t => sum(exp.filter(l=>costTypeOf(l)===t), l=>l.amount);
+  const varLed = byType("variable"), monthly = byType("monthly"), onetime = byType("onetime");
+  const variableAll = cost + varLed, gross = rev + jobScrap + otherInc - variableAll;
+  const topCats = t => { const o={}; exp.filter(l=>costTypeOf(l)===t).forEach(l=>o[l.category||"Other"]=(o[l.category||"Other"]||0)+(Number(l.amount)||0)); return Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k} ${money(v)}`).join(" · "); };
+  const gpJob = paid.length ? gross/paid.length : 0;
+  const expY2 = ledY.filter(isOpExp);
+  const varY = sum(paidY,costOf) + sum(expY2.filter(l=>costTypeOf(l)==="variable"),l=>l.amount), monY = sum(expY2.filter(l=>costTypeOf(l)==="monthly"),l=>l.amount), oneY = sum(expY2.filter(l=>costTypeOf(l)==="onetime"),l=>l.amount);
+  const owed = sum(done.filter(j=>!j.paid),priceOf);
+  const created = state.jobs.filter(j=>(j.createdAt||"").startsWith(m));
+  const won = created.filter(j=>j.status==="booked"||j.status==="done");
+  const closeRate = created.length ? Math.round(won.length/created.length*100) : 0;
+  const avg = paid.length ? rev/paid.length : 0;
+  const timed = paid.filter(j=>Number(j.hours)>0);
+  const hrs = sum(timed,j=>j.hours), miles = sum(paid,j=>j.miles), wear = sum(paid,wearOf);
+  const perHr = hrs ? (sum(timed,jobProfitEstOf)-sum(timed,wearOf))/hrs : null;
+  const trueProf = sum(paid,trueProfitOf);
+
+  // trend: last 6 months ending at m
+  const months = [...Array(6)].map((_,i)=>shiftMonth(m,i-5));
+  const tr = months.map(mm=>{ const p=state.jobs.filter(j=>j.status==="done"&&j.paid&&jobDate(j).startsWith(mm)); const r=sum(p,priceOf); const lm=ledgerIn(mm); return {mm, r, p:sum(p,jobProfitOf)+sum(lm.filter(l=>l.kind==="income"),l=>l.amount)-sum(lm.filter(isOpExp),l=>l.amount), n:p.length}; });
+  const max = Math.max(1,...tr.map(x=>x.r));
+  const trend = `<div class="trend" role="img" aria-label="Revenue for the last six months">${tr.map(x=>{ const h=(x.r/max*100).toFixed(1)+"%"; const sel=x.mm===m; return `<div class="col${sel?" sel":""}" style="--h:${h}" tabindex="0" data-tip="${esc(monthLabel(x.mm,{month:"short",year:"numeric"}))}: ${money(x.r)} revenue · ${money(x.p)} net profit · ${x.n} jobs">${sel&&x.r?`<span class="lab">${money(x.r)}</span>`:""}<div class="b" style="height:${h}"></div></div>`; }).join("")}</div>
+  <div class="trend-x">${tr.map(x=>`<span>${esc(monthLabel(x.mm,{month:"short"}))}</span>`).join("")}</div>`;
+
+  // sources
+  const srcs = {};
+  for(const j of created){ const k=j.source||"Other"; (srcs[k] ||= {leads:0,won:0,rev:0}).leads++; if(j.status==="booked"||j.status==="done") srcs[k].won++; }
+  for(const j of paid){ const k=j.source||"Other"; (srcs[k] ||= {leads:0,won:0,rev:0}).rev += priceOf(j); }
+  const srows = Object.entries(srcs).sort((a,b)=>b[1].rev-a[1].rev || b[1].leads-a[1].leads);
+  const smax = Math.max(1,...srows.map(r=>r[1].rev));
+
+  // diversion
+  const withD = done.filter(j=>j.disposal && (Number(j.disposal.donated)||Number(j.disposal.recycled)||Number(j.disposal.landfill)));
+  const avgD = k => withD.length ? sum(withD,j=>Number(j.disposal[k])||0)/withD.length : 0;
+  let dn=avgD("donated"), rc=avgD("recycled"), lf=avgD("landfill"); const tot=dn+rc+lf||1; dn=dn/tot*100; rc=rc/tot*100; lf=lf/tot*100;
+  const donatedTo = [...new Set(withD.map(j=>j.disposal.donatedTo).filter(Boolean))];
+
+  return `<section class="sec">
+    <div class="toolbar"><h2>Reports</h2><div class="monthnav"><button class="btn sm" data-act="month" data-n="-1" aria-label="Previous month">←</button><b>${esc(monthLabel(m))}</b><button class="btn sm" data-act="month" data-n="1" aria-label="Next month">→</button></div></div>
+    <div class="tiles">
+      ${tile("Revenue", money(rev), `${paid.length} paid jobs${owed?` · ${money(owed)} owed`:""}`, true)}
+      ${tile("Net profit", money(net), `after ${money(cost)} job costs & ${money(overhead)} business expenses`)}
+      ${tile("Avg ticket", money(avg), "per paid job")}
+      ${tile("Close rate", closeRate+"%", `${won.length} of ${created.length} new leads booked`)}
+      ${tile("Hours worked", hrs ? (Math.round(hrs*10)/10) : "—", hrs?`on ${timed.length} logged job${timed.length===1?"":"s"}`:"log hours on completed jobs")}
+      ${tile("Miles driven", miles ? Math.round(miles).toLocaleString() : "—", miles?`${money(wear)} truck wear at $${state.settings.costPerMile}/mi`:"log miles on completed jobs")}
+      ${tile("You earn per hour", perHr!=null ? money(perHr) : "—", perHr!=null?"after costs & truck wear":"needs hours logged", perHr!=null)}
+      ${tile("True profit", money(trueProf), `after paying yourself $${state.settings.ownerHourly}/hr`)}
+    </div>
+    <div class="cols">
+      <div class="panel sec"><h3>Revenue, last 6 months</h3>${trend}<p class="sub" style="margin:0">Hover or tap a bar for profit and job count.</p></div>
+      <div class="panel sec"><h3>Where jobs come from · ${esc(monthLabel(m,{month:"short"}))}</h3>
+        ${srows.length?`<div class="srcs"><table><thead><tr><th>Source</th><th>Revenue</th><th class="r">Leads</th><th class="r">Booked</th></tr></thead><tbody>
+        ${srows.map(([k,v])=>`<tr><td>${esc(k)}</td><td><div class="meter" data-tip="${esc(k)}: ${money(v.rev)}" tabindex="0"><i style="width:${(v.rev/smax*100).toFixed(1)}%"></i></div><span class="num" style="font-size:13px;color:var(--ink2)">${money(v.rev)}</span></td><td class="r num">${v.leads}</td><td class="r num">${v.leads?Math.round(v.won/v.leads*100)+"%":"—"}</td></tr>`).join("")}
+        </tbody></table></div>`:`<div class="empty">No leads logged this month.</div>`}
+      </div>
+    </div>
+    <div class="panel sec">
+      <div class="sec-h"><h3>Bottom line · ${esc(monthLabel(m,{month:"short"}))}</h3><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" data-act="newDumpRun">+ Dump run</button><button class="btn sm" data-act="newLedger" data-kind="expense">+ Expense</button><button class="btn sm" data-act="newLedger" data-kind="income">+ Other income</button></div></div>
+      <table class="pl"><tbody>
+        <tr><td>Job revenue</td><td class="num">${money(rev)}</td></tr>
+        <tr><td>Scrap & resale</td><td class="num">${money(jobScrap+otherInc)}</td></tr>
+        <tr class="grp"><td colspan="2">Variable costs</td></tr>
+        <tr><td class="in">On jobs <span class="sub">dump, gas, helpers, food</span></td><td class="num neg">−${money(cost)}</td></tr>
+        <tr><td class="in">Other variable${varLed?` <span class="sub">${esc(topCats("variable"))}</span>`:""}</td><td class="num neg">−${money(varLed)}</td></tr>
+        <tr class="sub-tot"><td>Gross profit <span class="sub">after variable costs${rev?` · ${Math.round(gross/(rev+jobScrap+otherInc)*100)}% margin`:""}</span></td><td class="num">${money(gross)}</td></tr>
+        <tr class="grp"><td colspan="2">Fixed costs</td></tr>
+        <tr><td class="in">Monthly bills${monthly?` <span class="sub">${esc(topCats("monthly"))}</span>`:""}</td><td class="num neg">−${money(monthly)}</td></tr>
+        <tr><td class="in">Equipment & one-time${onetime?` <span class="sub">${esc(topCats("onetime"))}</span>`:""}</td><td class="num neg">−${money(onetime)}</td></tr>
+        <tr class="tot"><td>Net profit</td><td class="num" style="color:${net>=0?"var(--good)":"var(--bad)"}">${money(net)}</td></tr>
+        ${buyAll.length?`<tr class="grp"><td colspan="2">After profit</td></tr>
+        <tr><td class="in">Partner buyout payments</td><td class="num neg">−${money(buyM)}</td></tr>
+        <tr class="sub-tot"><td>Cash left after payments</td><td class="num" style="color:${net-buyM>=0?"var(--good)":"var(--bad)"}">${money(net-buyM)}</td></tr>`:""}
+      </tbody></table>
+      ${buyAll.length?`<p class="sub" style="margin:0">Buyout: ${money(sum(buyAll.filter(l=>!l.planned),l=>l.amount))} of ${money(sum(buyAll,l=>l.amount))} paid · ${buyLeft.length} payment${buyLeft.length===1?"":"s"} left (${money(sum(buyLeft,l=>l.amount))})${buyNext?` · next ${money(buyNext.amount)} on ${esc(fmtDate(buyNext.date))}`:" · paid off"}. Not counted as a business expense.</p>`:""}
+      ${monthly && gpJob>0 ? `<p class="breakeven">Your monthly bills are <b>${money(monthly)}</b>. At <b>${money(gpJob)}</b> gross profit per job, <b>${Math.ceil(monthly/gpJob)} job${Math.ceil(monthly/gpJob)===1?"":"s"}</b> a month cover them. Every job after that is profit${onetime?` (or pays down equipment)`:""}.</p>`:""}
+      <p class="sub" style="margin:0">${esc(yr)} so far: ${money(revY)} job revenue · ${money(varY)} variable · ${money(monY)} monthly bills · ${money(oneY)} equipment & one-time · <b style="color:${netY>=0?"var(--good)":"var(--bad)"}">${money(netY)} net</b> · ${paidY.length} paid jobs</p>
+      ${ledList.length?`<div class="list ledger">${ledList.map(l=>`<button class="lrow${l.planned?" planned":""}" data-act="openLedger" data-id="${esc(l.id)}"><span class="sub tab">${esc(fmtDate(l.date))}</span><span>${esc(l.description||l.category)}<span class="sub"> · ${l.kind==="income"?esc(l.category||"Income"):`<span class="ctype ct-${costTypeOf(l)}">${TYPE_SHORT[costTypeOf(l)]}</span>`}${l.planned?` <span class="ctype ct-planned">Scheduled</span>`:""}</span></span><span class="num ${l.kind==="income"?"pos":"neg"}">${l.kind==="income"?"+":"−"}${money(l.amount)}</span></button>`).join("")}</div>`:`<div class="empty">No business expenses logged this month. Log trailer payments, insurance, signs, subscriptions and so on here.</div>`}
+    </div>
+    ${done.length?(()=>{ const rows=[...done].sort((a,b)=>jobDate(b)>jobDate(a)?1:-1).map(j=>({j,c:cust(j.customerId),e:dumpEstOf(j),p:jobProfitEstOf(j)}));
+      const tDump=sum(rows,r=>r.e.amt), tRev=sum(rows,r=>priceOf(r.j)), tOther=sum(rows,r=>nonDumpCostOf(r.j)), tP=sum(rows,r=>r.p);
+      return `<div class="panel sec"><div class="sec-h"><h3>Profit by job · ${esc(monthLabel(m,{month:"short"}))}</h3><span class="sub">dump fees estimated</span></div>
+      <div class="srcs"><table><thead><tr><th>Job</th><th class="r">Price</th><th class="r">Est. dump</th><th class="r">Gas, help, other</th><th class="r">Profit</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr class="clickrow" data-act="openJob" data-id="${esc(r.j.id)}" tabindex="0"><td><span class="sub tab">${esc(fmtDate(jobDate(r.j)).replace(/^\w+, /,""))}</span> ${esc(r.c?.name||"—")}</td><td class="r num">${money(priceOf(r.j))}</td><td class="r num" title="${r.e.run?`Share of ${money(r.e.runAmt)} dump run on ${fmtDate(r.e.run)} (${r.e.n} jobs)`:"Not dumped yet — estimated"}">${money(r.e.amt)}${r.e.pending?"*":""}</td><td class="r num">${nonDumpCostOf(r.j)?money(nonDumpCostOf(r.j)):"—"}</td><td class="r num" style="font-weight:700;color:${r.p>=0?"var(--good)":"var(--bad)"}">${money(r.p)}</td></tr>`).join("")}
+      <tr class="totrow"><td>Total · ${rows.length} jobs</td><td class="r num">${money(tRev)}</td><td class="r num">${money(tDump)}</td><td class="r num">${money(tOther)}</td><td class="r num">${money(tP)}</td></tr>
+      </tbody></table></div>
+      <p class="sub" style="margin:0">Each dump run's fee is split across the jobs since your previous dump run, weighted by job price. Your dump fees average <b>${Math.round(dumpAllocation().ratio*100)}% of job price</b>.${rows.some(r=>r.e.pending)?" * Not dumped yet: estimated at that average until you log the next dump run.":""} Monthly totals above use what you actually paid.</p></div>`; })():""}
+    <div class="panel sec"><h3>Where the junk went</h3>
+      ${withD.length?`<div class="stack" role="img" aria-label="Donated ${Math.round(dn)}%, recycled ${Math.round(rc)}%, landfill ${Math.round(lf)}%"><i style="width:${dn}%;background:var(--c-don)" data-tip="Donated ${Math.round(dn)}%" tabindex="0"></i><i style="width:${rc}%;background:var(--c-rec)" data-tip="Recycled ${Math.round(rc)}%" tabindex="0"></i><i style="width:${lf}%;background:var(--c-land)" data-tip="Landfill ${Math.round(lf)}%" tabindex="0"></i></div>
+      <div class="legend"><span><i style="background:var(--c-don)"></i>Donated ${Math.round(dn)}%</span><span><i style="background:var(--c-rec)"></i>Recycled ${Math.round(rc)}%</span><span><i style="background:var(--c-land)"></i>Landfill ${Math.round(lf)}%</span></div>
+      <p class="sub" style="margin:0"><b style="color:var(--ink)">${Math.round(dn+rc)}% kept out of the landfill</b> across ${withD.length} job${withD.length===1?"":"s"}. Good for your website and Google profile.${donatedTo.length?` Donated to: ${esc(donatedTo.join(", "))}.`:""}</p>`
+      :`<div class="empty">Log donated / recycled / landfill % on completed jobs to see your diversion rate.</div>`}
+    </div>
+  </section>`;
+}
+
+function viewSettings(){
+  const s = state.settings;
+  const exN = state.jobs.filter(j=>j.example).length + state.customers.filter(c=>c.example).length;
+  const row = (id,label,val,step="1") => `<tr><td>${esc(label)}</td><td><input id="${id}" type="number" step="${step}" value="${esc(val)}" inputmode="decimal"></td></tr>`;
+  return `<section class="sec">
+    <div class="toolbar"><h2>Settings</h2><button class="btn primary" data-act="saveSettings">Save settings</button></div>
+    ${!DB?`<div class="banner">Preview mode: settings changes won't be kept.</div>`:""}
+    <div class="cols">
+      <fieldset><legend>Business</legend>
+        <label class="f">Business name<input id="s-name" value="${esc(s.businessName)}" placeholder="e.g. Hauling Co."></label>
+        <label class="f">Google review link<input id="s-review" value="${esc(s.reviewLink)}" placeholder="https://g.page/r/…"></label>
+        <p class="sub" style="margin:0">The review link is added to the “Ask for review” text you copy from a completed job.</p>
+        <label class="f">Helpers (comma-separated)<input id="s-helpers" value="${esc((s.helpers||[]).join(", "))}" placeholder="e.g. Nathan, Ethan"></label>
+      </fieldset>
+      <fieldset><legend>Dump & gas</legend>
+        <label class="f">Where you dump<input id="s-dumpsite" value="${esc(s.dumpSite)}"></label>
+        <div class="grid2">
+          <label class="f">Minimum fee ($)<input id="s-dumpmin" type="number" step="0.01" value="${esc(s.dumpMin)}"></label>
+          <label class="f">Minimum covers up to (lbs)<input id="s-dumpminlbs" type="number" value="${esc(s.dumpMinLbs)}"></label>
+          <label class="f">Price per ton after that ($)<input id="s-dumpton" type="number" step="0.01" value="${esc(s.dumpPerTon)}"></label>
+          <label class="f">Mattress fee at the dump ($ each)<input id="s-dumpmatt" type="number" step="0.01" value="${esc(s.mattressDumpFee)}"></label>
+          <label class="f">Full load weighs about (lbs)<input id="s-fullload" type="number" value="${esc(s.fullLoadLbs)}"></label>
+          <label class="f">Gas per job ($)<input id="s-fuel" type="number" value="${esc(s.fuelPerJob)}"></label>
+        </div>
+        <p class="sub" style="margin:0">Enter the weight from your dump ticket on a job and the fee is worked out for you. “Full load weighs about” is used to estimate the fee before you dump — check it against a few of your tickets.</p>
+      </fieldset>
+      <fieldset><legend>Receipts & invoices</legend>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <div class="logo-prev">${s.logo?`<img src="${esc(blobUrl(s.logo))}" alt="Your logo">`:`<span class="sub">No logo</span>`}</div>
+          ${ASSETS?`<label class="btn sm filebtn">${s.logo?"Replace logo":"Upload logo"}<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" id="s-logo-up"></label>${s.logo?`<button class="btn sm ghost" data-act="rmLogo">Remove</button>`:""}`:`<span class="sub">Logo upload works on the published page.</span>`}
+        </div>
+        <div class="grid2">
+          <label class="f">Business phone<input id="s-phone" type="tel" value="${esc(s.phone)}"></label>
+          <label class="f">Business email<input id="s-email" type="email" value="${esc(s.email)}"></label>
+          <label class="f">City / service area<input id="s-city" value="${esc(s.city)}" placeholder="e.g. Serving Greater Austin"></label>
+          <label class="f">Sales tax %<input id="s-tax" type="number" step="0.01" value="${esc(s.taxRate)}"></label>
+        </div>
+        <label class="f">Note at the bottom<input id="s-note" value="${esc(s.receiptNote)}"></label>
+      </fieldset>
+      <fieldset><legend>Your time & truck</legend>
+        <div class="grid2">
+          <label class="f">Pay yourself ($/hour)<input id="s-hourly" type="number" value="${esc(s.ownerHourly)}"></label>
+          <label class="f">Truck wear ($/mile)<input id="s-mile" type="number" step="0.01" value="${esc(s.costPerMile)}"></label>
+        </div>
+        <p class="sub" style="margin:0">Truck wear covers tires, oil, repairs and depreciation; log gas separately as fuel. $0.25–0.35/mile is typical for a box truck or pickup and trailer. Used for “true profit” and “you earn per hour”.</p>
+      </fieldset>
+      <fieldset><legend>Trailer-load prices</legend>
+        <div class="grid2">
+          <label class="f">Your trailer<input id="s-trailer" value="${esc(s.trailer||"")}" placeholder="e.g. 6.5×10 dump trailer"></label>
+          <label class="f">Full load (cubic yards)<input id="s-yards" type="number" step="0.1" value="${esc(s.fullLoadYards||"")}"></label>
+        </div>
+        <label class="check"><input type="checkbox" id="s-useadj" ${useAdj(s)?"checked":""}>Charge extra for material, weight, stairs & access</label>
+        <table class="set-table"><tbody>${s.volumes.map((v,i)=>row("s-vol-"+i, v.label==="Min"?"Minimum (single item)":v.label+" trailer", v.price)).join("")}</tbody></table>
+      </fieldset>
+      <fieldset ${useAdj(s)?"":"hidden"}><legend>Material multiplier</legend>
+        <p class="sub" style="margin:0">Load price × this number. 1.15 = 15% more.</p>
+        <table class="set-table"><tbody>${s.materials.map((v,i)=>row("s-mat-"+i, v.label, v.mult, "0.05")).join("")}</tbody></table>
+      </fieldset>
+      <fieldset ${useAdj(s)?"":"hidden"}><legend>Weight & access ($ added)</legend>
+        <table class="set-table"><tbody>${s.weights.map((v,i)=>row("s-wt-"+i, v.label, v.add)).join("")}${s.access.map((v,i)=>row("s-ac-"+i, v.label, v.add)).join("")}</tbody></table>
+        <p class="sub" style="margin:0">Use a negative number for a discount (curbside is −$20 by default).</p>
+      </fieldset>
+      <fieldset><legend>Item surcharges ($ each)</legend>
+        <table class="set-table"><tbody>${s.items.map((v,i)=>`<tr><td><input class="l" id="s-itl-${i}" value="${esc(v.label)}"></td><td><input id="s-it-${i}" type="number" value="${esc(v.price)}"></td></tr>`).join("")}
+        <tr><td><input class="l" id="s-itl-new" placeholder="Add item (e.g. Hot water heater)"></td><td><input id="s-it-new" type="number" placeholder="$"></td></tr></tbody></table>
+        <p class="sub" style="margin:0">Clear an item's name to remove it.</p>
+      </fieldset>
+      <fieldset><legend>Data</legend>
+        <p class="sub" style="margin:0">${state.jobs.length} jobs · ${state.customers.length} customers. Everything is saved on this device only. Save a backup every week or so. It's also how you move to a new phone.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-hd="backup">Save backup</button><label class="btn filebtn">Restore backup<input type="file" id="hd-restore" accept=".json,application/json"></label></div>
+        <div id="hd-restore-box"></div>
+        ${exN?`<button class="btn danger" data-act="clearExamples" id="clearEx">Remove ${exN} example records</button><p class="sub" style="margin:0">Records tagged “Example” are sample data to show how things work.</p>`:""}
+      </fieldset>
+    </div>
+  </section>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  renderNav();
+  const ready = !DB || (state.loaded.jobs && state.loaded.customers);
+  if(!ready){ $("#main").innerHTML = `<div class="loading">Loading your jobs…</div>`; return; }
+  const banner = !state.live ? `<div class="banner">Preview mode with example data. This browser can't save data here. Open the app in Safari or Chrome (not a private window).</div>` : "";
+  const v = {today:viewToday, pipeline:viewPipeline, schedule:viewSchedule, customers:viewCustomers, reports:viewReports, settings:viewSettings}[state.view];
+  const focusId = document.activeElement?.id, pos = document.activeElement?.selectionStart;
+  if(state.view==="settings" && $("#s-name") ) return; // don't clobber an open settings form
+  $("#main").innerHTML = banner + v();
+  if(focusId && (focusId==="pipe-q"||focusId==="cust-q")){ const el=$("#"+focusId); if(el){ el.focus(); try{el.setSelectionRange(pos,pos);}catch{} } }
+}
+function go(view){ state.view=view; $("#main").innerHTML=""; render(); window.scrollTo(0,0); }
+
+/* ---------- job editor ---------- */
+let draft=null, isNew=false, delArm=false, removedPhotos=[], importOpen=false;
+function newDraft(preset={}){
+  return { id:uid(), status:"lead", source:"Phone call", createdAt:new Date().toISOString(), title:"", address:"", date:"", window:"", followUp:"", notes:"",
+    quote:{volume:"", material:"household", weight:"normal", access:[], flights:1, items:{}, adjust:0}, quoteTotal:0,
+    finalPrice:"", paid:false, payMethod:"Cash", costs:{dump:"",fuel:"",labor:"",other:""}, disposal:{donated:"",recycled:"",landfill:"",donatedTo:""}, photos:[], reviewAsked:false, lostReason:"", miles:"", hours:"", ...preset };
+}
+function openJob(id, preset){
+  const j = id && state.jobs.find(x=>x.id===id);
+  isNew = !j; delArm=false; removedPhotos=[];
+  draft = j ? structuredClone(j) : newDraft(preset);
+  draft.quote = {material:"household",weight:"normal",access:[],flights:1,items:{},adjust:0,volume:"", ...(draft.quote||{})};
+  draft.costs = {dump:"",fuel:"",labor:"",other:"", ...(draft.costs||{})};
+  draft.disposal = {donated:"",recycled:"",landfill:"",donatedTo:"", ...(draft.disposal||{})};
+  draft.photos = [...(draft.photos||[])];
+  renderJobSheet();
+}
+const opt = (v,l,sel) => `<option value="${esc(v)}"${String(sel)===String(v)?" selected":""}>${esc(l)}</option>`;
+function renderJobSheet(){
+  const d = draft, s = state.settings, q = d.quote, c = cust(d.customerId);
+  const custs = [...state.customers].sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+  const statusBlock = `<fieldset><legend>${isNew?"Follow-up":"Status"}</legend>
+        <div class="grid3">
+          <label class="f">Stage<select id="f-status">${STATUSES.map(x=>opt(x.key,x.label,d.status)).join("")}</select></label>
+          <label class="f">Lead source<select id="f-source">${SOURCES.map(x=>opt(x,x,d.source)).join("")}</select></label>
+          <label class="f">Follow up on<input id="f-follow" type="date" value="${esc(d.followUp)}"></label>
+        </div>
+        <label class="f" id="lostwrap" ${d.status==="lost"?"":"hidden"}>Why lost?<input id="f-lost" value="${esc(d.lostReason)}" placeholder="Price, went with someone else, no response…"></label>
+      </fieldset>`;
+  $("#sheet").innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-h"><h2 id="sheet-title">${isNew?"New lead":esc(c?.name||"Job")}</h2>${d.example?'<span class="ex">Example</span>':""}<button class="btn ghost iconbtn" data-act="closeSheet" aria-label="Close">✕</button></div>
+    <div class="sheet-b">
+      ${isNew?`<div class="importbox">
+        <button type="button" class="importtoggle" data-act="toggleImport" aria-expanded="${importOpen}" aria-controls="importbody">Paste a website form email <span aria-hidden="true">${importOpen?"▴":"▾"}</span></button>
+        <div id="importbody" class="importbody" ${importOpen?"":"hidden"}>
+          <p class="sub" style="margin:0">Copy the whole notification email from Gmail and paste it here. Name, phone, email, address and message get filled in for you.</p>
+          <textarea id="f-import" rows="6" aria-label="Website form email text" placeholder="Name: Jane Smith&#10;Phone: (555) 555-0123&#10;Email: jane@email.com&#10;Address: 12 Oak St, Murfreesboro&#10;Message: Old sectional and a treadmill in the basement"></textarea>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button type="button" class="btn primary sm" data-act="parseImport">Fill in lead</button>${SAMPLE?`<button type="button" class="btn sm" data-act="aiImport" id="aibtn">Messy email? Read it with Claude</button>`:""}<span class="sub" id="importmsg"></span></div>
+        </div>
+      </div>`:""}
+      ${isNew?"":statusBlock}
+
+      <fieldset><legend>Customer</legend>
+        <label class="f">Customer<select id="f-cust"><option value="__new">+ New customer</option>${custs.map(x=>opt(x.id, x.name+(x.phone?" · "+x.phone:""), d.customerId)).join("")}</select></label>
+        <div id="newcust" class="grid2" ${d.customerId?"hidden":""}>
+          <label class="f">Name<input id="f-cname" autocomplete="off" placeholder="Full name"></label>
+          <label class="f">Phone<input id="f-cphone" type="tel" placeholder="(555) 555-0123"></label>
+          <label class="f">Email<input id="f-cemail" type="email"></label>
+          <label class="f">Type<select id="f-ctype">${CUST_TYPES.map(x=>opt(x,x,"Residential")).join("")}</select></label>
+        </div>
+        ${c?`<div class="contact">${c.phone?`<span class="val">${esc(c.phone)}</span><button class="btn sm" data-act="copy" data-text="${esc(c.phone)}">Copy</button><a class="btn sm" href="tel:${esc(c.phone.replace(/[^\d+]/g,""))}">Call</a><a class="btn sm" href="sms:${esc(c.phone.replace(/[^\d+]/g,""))}">Text</a>`:""}${c.email?`<span class="val">${esc(c.email)}</span>`:""}<span class="sub">${esc(c.type||"")}${custStats(c).done.length?` · ${custStats(c).done.length} past jobs`:""}</span></div>`:""}
+      </fieldset>
+
+      <fieldset><legend>Job</legend>
+        <label class="f">What are we hauling?<input id="f-title" value="${esc(d.title)}" placeholder="e.g. Garage cleanout, old couch + mattress"></label>
+        <label class="f">Address<input id="f-addr" value="${esc(d.address)}" placeholder="Street, city" autocomplete="street-address"></label>
+        <div class="grid2">
+          <label class="f">Job date<input id="f-date" type="date" value="${esc(d.date)}"></label>
+          <label class="f">Arrival window<select id="f-window">${opt("","—",d.window)}${WINDOWS.map(x=>opt(x,x,d.window)).join("")}</select></label>
+        </div>
+        <label class="f">Notes<textarea id="f-notes" placeholder="Gate code, dog in yard, items to leave, etc.">${esc(d.notes)}</textarea></label>
+      </fieldset>
+      ${isNew?statusBlock:""}
+
+      <fieldset><legend>Quote</legend>
+        <label class="f" style="margin-bottom:-4px">Trailer load${s.trailer?` <span class="sub" style="text-transform:none;letter-spacing:0;font-weight:500">· ${esc(s.trailer)}</span>`:""}</label>
+        <div class="segs">
+          <label class="seg"><input type="radio" name="vol" id="f-vol-none" value="" ${!q.volume?"checked":""}><span><b>?</b><small>Not sure</small></span></label>
+          ${s.volumes.map((v,i)=>{ const yd = s.fullLoadYards && VOL_FRACTION[v.key] && v.key!=="min" ? `≈${(s.fullLoadYards*VOL_FRACTION[v.key]).toFixed(1)} yd³` : v.key==="min"?"1 item":""; return `<label class="seg"><input type="radio" name="vol" id="f-vol-${i}" value="${esc(v.key)}" ${q.volume===v.key?"checked":""}><span><b>${esc(v.label)}</b><small>${money(v.price)}</small>${yd?`<small>${yd}</small>`:""}</span></label>`; }).join("")}
+        </div>
+        <div class="grid2">
+          <label class="f">Material<select id="f-mat">${s.materials.map(x=>opt(x.key, useAdj(s)?`${x.label} (×${x.mult})`:x.label, q.material)).join("")}</select></label>
+          <label class="f">Weight<select id="f-wt">${s.weights.map(x=>opt(x.key, `${x.label}${useAdj(s)&&x.add?` (+${money(x.add)})`:""}`, q.weight)).join("")}</select></label>
+        </div>
+        ${useAdj(s)?"":`<p class="sub" style="margin:-4px 0 0">Material and weight don't change the price. They're only used to estimate the dump fee.</p>`}
+        <div class="grid2" style="align-items:start">
+          <div style="display:grid;gap:8px" ${useAdj(s)?"":"hidden"}><span class="f" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Access</span>
+            ${s.access.map((a,i)=>`<label class="check"><input type="checkbox" id="f-ac-${i}" value="${esc(a.key)}" ${q.access.includes(a.key)?"checked":""}>${esc(a.label)} <span class="sub">${a.add<0?"−":"+"}${money(Math.abs(a.add)).replace(/^[−]/,"")}</span></label>`).join("")}
+            <label class="qty" id="flightswrap" ${q.access.includes("stairs")?"":"hidden"}>Flights of stairs<input id="f-flights" type="number" min="1" value="${esc(q.flights||1)}"></label>
+          </div>
+          <div style="display:grid;gap:8px"><span style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Special items (qty)</span>
+            ${s.items.map((it,i)=>`<label class="qty">${esc(it.label)} <span class="sub">${money(it.price)} ea</span><input id="f-it-${i}" type="number" min="0" inputmode="numeric" value="${esc(q.items[it.key]||"")}" placeholder="0"></label>`).join("")}
+            ${singleItemNote()}
+            <label class="qty">Discount / extra ± ($)<input id="f-adjust" type="number" inputmode="decimal" value="${esc(q.adjust||"")}" placeholder="0"></label>
+          </div>
+        </div>
+        <div class="total"><div><div class="k">Quote</div><div class="v" id="q-total">$0</div></div><button class="btn sm" data-act="copyQuote">Copy quote text</button></div>
+      </fieldset>
+
+      <fieldset><legend>After the job</legend>
+        <div class="grid3">
+          <label class="f">Final price ($)<input id="f-final" type="number" inputmode="decimal" value="${esc(d.finalPrice)}" placeholder="Same as quote"></label>
+          <label class="f">Paid with<select id="f-pay">${PAY.map(x=>opt(x,x,d.payMethod)).join("")}</select></label>
+          <label class="check" style="align-self:end;padding-bottom:10px"><input type="checkbox" id="f-paid" ${d.paid?"checked":""}>Paid</label>
+        </div>
+        <div class="grid4">
+          <label class="f">Dump fee<input id="f-c-dump" type="number" inputmode="decimal" value="${esc(d.costs.dump)}"></label>
+          <label class="f">Fuel<input id="f-c-fuel" type="number" inputmode="decimal" value="${esc(d.costs.fuel)}"></label>
+          <label class="f">Helper pay<input id="f-c-labor" type="number" inputmode="decimal" value="${esc(d.costs.labor)}"></label>
+          <label class="f">Other / food<input id="f-c-other" type="number" inputmode="decimal" value="${esc(d.costs.other)}"></label>
+        </div>
+        <div class="grid3">
+          <label class="f">Dump ticket weight (lbs)<input id="f-dumplbs" type="number" inputmode="numeric" value="${esc(d.dumpLbs??"")}" placeholder="Fills in dump fee"></label>
+          <label class="f">Helper<input id="f-helper" list="helperlist" value="${esc(d.helper??"")}" placeholder="Who helped?"><datalist id="helperlist">${(s.helpers||[]).map(h=>`<option value="${esc(h)}"></option>`).join("")}</datalist></label>
+          <label class="f">Scrap / resale from this job ($)<input id="f-scrap" type="number" inputmode="decimal" value="${esc(d.scrap??"")}"></label>
+        </div>
+        <div class="grid2">
+          <label class="f">Miles driven (round trip + dump)<input id="f-miles" type="number" inputmode="decimal" value="${esc(d.miles??"")}"></label>
+          <label class="f">Your hours on the job<input id="f-hours" type="number" step="0.25" inputmode="decimal" value="${esc(d.hours??"")}"></label>
+        </div>
+        <div class="profitline" id="profitline"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" data-act="estCosts">Estimate costs from load size</button><button class="btn sm" data-act="receipt">${d.paid?"Receipt":"Invoice / receipt"}</button></div>
+        <div class="grid3">
+          <label class="f">Donated %<input id="f-d-don" type="number" min="0" max="100" value="${esc(d.disposal.donated)}"></label>
+          <label class="f">Recycled %<input id="f-d-rec" type="number" min="0" max="100" value="${esc(d.disposal.recycled)}"></label>
+          <label class="f">Landfill %<input id="f-d-land" type="number" min="0" max="100" value="${esc(d.disposal.landfill)}"></label>
+        </div>
+        <label class="f">Donated to<input id="f-d-to" value="${esc(d.disposal.donatedTo)}" placeholder="e.g. Habitat ReStore, Goodwill"></label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <label class="check"><input type="checkbox" id="f-review" ${d.reviewAsked?"checked":""}>Asked for a review</label>
+          <button class="btn sm" data-act="copyReview">Copy review request</button>
+        </div>
+      </fieldset>
+
+      <fieldset><legend>Photos</legend>
+        <div class="photos" id="photos"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="photobtns"></div>
+      </fieldset>
+    </div>
+    <div class="sheet-f">
+      ${isNew?"":`<button class="btn danger" data-act="deleteJob" id="delbtn">Delete</button>`}
+      <span class="sp"></span>
+      <button class="btn" data-act="closeSheet">Cancel</button>
+      <button class="btn primary" data-act="saveJob">Save</button>
+    </div>
+  </div></div>`;
+  $("#sheet").hidden=false; document.body.style.overflow="hidden";
+  renderPhotos(); updateLive();
+  if(isNew && !importOpen && FINE_POINTER) setTimeout(()=>$("#f-cust")?.focus(),50);
+}
+function renderPhotos(){
+  const box=$("#photos"); if(!box) return;
+  box.innerHTML = draft.photos.length ? draft.photos.map((p,i)=>`<div class="ph"><button style="all:unset;display:block;width:100%;height:100%;cursor:zoom-in" data-act="lightbox" data-src="${esc(blobUrl(p.id))}" aria-label="View photo"><img src="${esc(blobUrl(p.id))}" alt="${esc(p.tag)} photo" loading="lazy" onerror="this.style.opacity=.2"></button><span class="tag">${esc(p.tag)}</span><button class="x" data-act="rmPhoto" data-i="${i}" aria-label="Remove photo">×</button></div>`).join("") : `<div class="sub" style="grid-column:1/-1">Customer's photos for quoting, plus before/after shots for marketing.</div>`;
+  $("#photobtns").innerHTML = ASSETS ? ["quote","before","after"].map(t=>`<label class="btn sm filebtn">+ ${t==="quote"?"Quote pics":t[0].toUpperCase()+t.slice(1)}<input type="file" accept="image/*" multiple data-tag="${t}" id="f-up-${t}"></label>`).join("") : `<span class="sub">Photo uploads work on the published page.</span>`;
+}
+function readQuote(){
+  const s=state.settings, q=draft.quote;
+  q.volume = ($('input[name="vol"]:checked')||{}).value || "";
+  q.material = $("#f-mat").value; q.weight = $("#f-wt").value;
+  q.access = s.access.map((a,i)=>$("#f-ac-"+i).checked?a.key:null).filter(Boolean);
+  q.flights = Number($("#f-flights").value)||1;
+  q.items = {}; s.items.forEach((it,i)=>{ const n=Number($("#f-it-"+i).value)||0; if(n) q.items[it.key]=n; });
+  q.adjust = Number($("#f-adjust").value)||0;
+  draft.quoteTotal = calcQuote(q);
+}
+function readDraft(){
+  readQuote();
+  const d=draft, v=id=>$(id).value.trim();
+  d.status=v("#f-status"); d.followUp=v("#f-follow"); d.source=v("#f-source"); d.lostReason=v("#f-lost");
+  d.title=v("#f-title"); d.address=v("#f-addr"); d.date=v("#f-date"); d.window=v("#f-window"); d.notes=$("#f-notes").value;
+  d.finalPrice = v("#f-final")===""?"":Number(v("#f-final")); d.payMethod=v("#f-pay"); d.paid=$("#f-paid").checked;
+  d.costs={dump:v("#f-c-dump"),fuel:v("#f-c-fuel"),labor:v("#f-c-labor"),other:v("#f-c-other")};
+  for(const k in d.costs) d.costs[k] = d.costs[k]===""?"":Number(d.costs[k]);
+  d.disposal={donated:v("#f-d-don"),recycled:v("#f-d-rec"),landfill:v("#f-d-land"),donatedTo:v("#f-d-to")};
+  d.reviewAsked=$("#f-review").checked;
+  d.miles = v("#f-miles")===""?"":Number(v("#f-miles"));
+  d.hours = v("#f-hours")===""?"":Number(v("#f-hours"));
+  d.helper = v("#f-helper");
+  d.dumpLbs = v("#f-dumplbs")===""?"":Number(v("#f-dumplbs"));
+  d.scrap = v("#f-scrap")===""?"":Number(v("#f-scrap"));
+}
+function updateLive(){
+  if(!$("#q-total")) return;
+  readQuote();
+  $("#q-total").textContent = draft.quote.volume ? money(draft.quoteTotal) : "Pick a volume";
+  const price = Number($("#f-final").value) || draft.quoteTotal;
+  const costs = ["dump","fuel","labor","other"].reduce((a,k)=>a+(Number($("#f-c-"+k).value)||0),0);
+  const s = state.settings, miles = Number($("#f-miles").value)||0, hours = Number($("#f-hours").value)||0;
+  const wear = miles*(Number(s.costPerMile)||0), yourTime = hours*(Number(s.ownerHourly)||0);
+  const scrap = Number($("#f-scrap").value)||0;
+  const cashP = price+scrap-costs, trueP = cashP-wear-yourTime;
+  const col = n => n>=0?"var(--good)":"var(--bad)";
+  $("#profitline").innerHTML = `<span>Price <b>${money(price)}</b></span>${scrap?`<span>Scrap <b>+${money(scrap)}</b></span>`:""}<span>Costs <b>${money(costs)}</b></span><span>Cash profit <b style="color:${col(cashP)}">${money(cashP)}</b></span>${price?`<span>Margin <b>${Math.round(cashP/price*100)}%</b></span>`:""}`
+    + (()=>{ const e=dumpEstOf({...draft, finalPrice:price}), dumpField=Number($("#f-c-dump").value)||0, estP=price+scrap-(costs-dumpField)-e.amt;
+        const why = e.run ? `share of the ${money(e.runAmt)} dump run on ${fmtDate(e.run)}, split across ${e.n} job${e.n===1?"":"s"}` : e.fromVolume ? "from the load size" : `≈${Math.round(dumpAllocation().ratio*100)}% of price until your next dump run`;
+        return `<span style="flex-basis:100%;height:0"></span><span>Est. dump share <b>${money(e.amt)}</b> <span class="sub">(${why})</span></span><span>Est. job profit <b style="color:${col(estP)}">${money(estP)}</b></span>`; })()
+    + (miles||hours ? `<span style="flex-basis:100%;height:0"></span>${miles?`<span>Truck wear <b>${money(wear)}</b> <span class="sub">(${miles} mi × $${s.costPerMile})</span></span>`:""}${hours?`<span>You earned <b style="color:${col(cashP-wear)}">${money((cashP-wear)/hours)}/hr</b></span><span>True profit <b style="color:${col(trueP)}">${money(trueP)}</b> <span class="sub">after paying yourself $${s.ownerHourly}/hr</span></span>`:""}` : "");
+  $("#flightswrap").hidden = !draft.quote.access.includes("stairs");
+  $("#lostwrap").hidden = $("#f-status").value!=="lost";
+  $("#newcust").hidden = $("#f-cust").value!=="__new";
+}
+function closeSheet(){ $("#sheet").hidden=true; $("#sheet").innerHTML=""; document.body.style.overflow=""; draft=null; render(); }
+
+async function saveJob(){
+  readDraft();
+  const sel = $("#f-cust").value;
+  let custId = sel==="__new" ? null : sel;
+  if(sel==="__new"){
+    const name=$("#f-cname").value.trim();
+    if(!name){ toast("Add the customer's name first."); $("#f-cname").focus(); return; }
+    const c={id:uid(), name, phone:$("#f-cphone").value.trim(), email:$("#f-cemail").value.trim(), type:$("#f-ctype").value, address:draft.address, source:draft.source, createdAt:new Date().toISOString()};
+    try{ await put("customers", c); }catch{ return; }
+    custId=c.id;
+  } else {
+    const c=cust(custId);
+    if(c && !c.address && draft.address){ try{ await put("customers",{...c, address:draft.address}); }catch{} }
+  }
+  draft.customerId=custId;
+  if(draft.status==="done" && !draft.date) draft.date=today();
+  try{ await put("jobs", draft); }catch{ return; }
+  if(ASSETS) for(const id of removedPhotos){ try{ await ASSETS.delete(id); }catch{} }
+  toast(isNew?"Lead saved":"Saved");
+  closeSheet();
+}
+
+/* photos */
+async function shrink(file){
+  try{
+    const bmp = await createImageBitmap(file);
+    const sc = Math.min(1, 1600/Math.max(bmp.width,bmp.height));
+    const cv = document.createElement("canvas"); cv.width=Math.round(bmp.width*sc); cv.height=Math.round(bmp.height*sc);
+    cv.getContext("2d").drawImage(bmp,0,0,cv.width,cv.height);
+    return await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(),"image/jpeg",.82));
+  }catch{ return file; }
+}
+async function addPhotos(files, tag){
+  if(!ASSETS){ toast("Photo uploads work on the published page."); return; }
+  toast(`Uploading ${files.length} photo${files.length>1?"s":""}…`);
+  for(const f of files){
+    try{ const b=await shrink(f); const r=await ASSETS.upload(b,{type:b.type||"image/jpeg"}); draft.photos.push({id:r.id, tag}); renderPhotos(); }
+    catch(e){ toast(e?.code==="unsupported_type"?"That file type isn't supported — use JPG or PNG.": e?.code==="too_large"?"Photo is too large (20 MB max).": e?.code==="quota_or_state"?"Photo storage is full.":"Upload failed — try again."); }
+  }
+  toast("Photos added — tap Save to keep them");
+}
+
+/* customer sheet */
+let custDraft=null;
+function openCust(id){
+  const c = id ? cust(id) : null; custDraft = c ? {...c} : {id:uid(), name:"", phone:"", email:"", address:"", type:"Residential", source:"Referral", notes:"", createdAt:new Date().toISOString()};
+  delArm=false;
+  const st = c ? custStats(c) : {jobs:[],done:[],value:0};
+  $("#sheet").innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-h"><h2 id="sheet-title">${c?esc(c.name):"New customer"}</h2><button class="btn ghost iconbtn" data-act="closeSheet" aria-label="Close">✕</button></div>
+    <div class="sheet-b">
+      ${c?`<div class="tiles">${tile("Lifetime paid",money(st.value),"",true)}${tile("Jobs done",st.done.length)}${tile("Avg job",money(st.done.length?st.value/Math.max(1,st.done.filter(j=>j.paid).length):0))}${tile("Customer since",esc(new Date(c.createdAt||Date.now()).toLocaleDateString(undefined,{month:"short",year:"numeric"})))}</div>`:""}
+      <fieldset><legend>Contact</legend>
+        <div class="grid2">
+          <label class="f">Name<input id="c-name" value="${esc(custDraft.name)}"></label>
+          <label class="f">Phone<input id="c-phone" type="tel" value="${esc(custDraft.phone)}"></label>
+          <label class="f">Email<input id="c-email" type="email" value="${esc(custDraft.email)}"></label>
+          <label class="f">Type<select id="c-type">${CUST_TYPES.map(x=>opt(x,x,custDraft.type)).join("")}</select></label>
+          <label class="f">How they found you<select id="c-source">${SOURCES.map(x=>opt(x,x,custDraft.source)).join("")}</select></label>
+          <label class="f">Referred by<input id="c-ref" value="${esc(custDraft.referredBy||"")}" placeholder="Name, if a referral"></label>
+        </div>
+        <label class="f">Address<input id="c-addr" value="${esc(custDraft.address)}"></label>
+        <label class="f">Notes<textarea id="c-notes" placeholder="Prefers texts, property list, billing contact…">${esc(custDraft.notes)}</textarea></label>
+        ${c?.phone?`<div class="contact"><span class="val">${esc(c.phone)}</span><button class="btn sm" data-act="copy" data-text="${esc(c.phone)}">Copy</button><a class="btn sm" href="tel:${esc(c.phone.replace(/[^\d+]/g,""))}">Call</a><a class="btn sm" href="sms:${esc(c.phone.replace(/[^\d+]/g,""))}">Text</a></div>`:""}
+      </fieldset>
+      ${c?`<div class="sec"><div class="sec-h"><h3>Jobs</h3><button class="btn sm" data-act="jobForCust" data-id="${esc(c.id)}">+ New job</button></div><div class="list">${st.jobs.length? st.jobs.sort((a,b)=>jobDate(b)>jobDate(a)?1:-1).map(jobCard).join("") : `<div class="empty">No jobs yet.</div>`}</div></div>`:""}
+    </div>
+    <div class="sheet-f">${c?`<button class="btn danger" data-act="deleteCust" id="delbtn">Delete</button>`:""}<span class="sp"></span><button class="btn" data-act="closeSheet">Cancel</button><button class="btn primary" data-act="saveCust">Save</button></div>
+  </div></div>`;
+  $("#sheet").hidden=false; document.body.style.overflow="hidden";
+}
+async function saveCust(){
+  const v=id=>$(id).value.trim();
+  const c={...custDraft, name:v("#c-name"), phone:v("#c-phone"), email:v("#c-email"), type:v("#c-type"), source:v("#c-source"), referredBy:v("#c-ref"), address:v("#c-addr"), notes:$("#c-notes").value};
+  if(!c.name){ toast("Add a name first."); return; }
+  try{ await put("customers", c); }catch{ return; }
+  toast("Customer saved"); closeSheet();
+}
+
+/* business expenses & other income */
+let ledDraft=null;
+function openLedger(id, kind="expense", preset={}){
+  const l = id ? state.ledger.find(x=>x.id===id) : null;
+  ledDraft = l ? {...l} : {id:uid(), kind, date:today(), description:"", category: kind==="income"?"Resale":"Supplies", amount:"", ...preset};
+  delArm=false;
+  const cats = k => (k==="income"?INC_CATS:EXP_CATS).map(c=>opt(c,c,ledDraft.category)).join("");
+  $("#sheet").innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" style="max-width:520px">
+    <div class="sheet-h"><h2 id="sheet-title">${l?"Edit":"New"} ${ledDraft.kind==="income"?"income":"expense"}</h2><button class="btn ghost iconbtn" data-act="closeSheet" aria-label="Close">✕</button></div>
+    <div class="sheet-b"><fieldset><legend>${ledDraft.kind==="income"?"Money in":"Money out"}</legend>
+      <div class="grid2">
+        <label class="f">Date<input id="l-date" type="date" value="${esc(ledDraft.date)}"></label>
+        <label class="f">Amount ($)<input id="l-amt" type="number" step="0.01" inputmode="decimal" value="${esc(ledDraft.amount)}"></label>
+      </div>
+      ${"planned" in ledDraft?`<label class="check"><input type="checkbox" id="l-paid" ${ledDraft.planned?"":"checked"}>Paid${ledDraft.planned?` <span class="sub">— tick when you've made this payment</span>`:""}</label>`:""}
+      <div class="grid2" id="l-dumpwrap" ${ledDraft.category==="Dump fees"?"":"hidden"}>
+        <label class="f">Ticket weight (lbs)<input id="l-lbs" type="number" inputmode="numeric" value="${esc(ledDraft.lbs??"")}" placeholder="Fills in amount"></label>
+        <label class="f">Mattresses dumped<input id="l-matt" type="number" inputmode="numeric" value="${esc(ledDraft.mattresses??"")}" placeholder="0"></label>
+      </div>
+      <label class="f">What was it?<input id="l-desc" value="${esc(ledDraft.description)}" placeholder="${ledDraft.kind==="income"?"e.g. Sold recliner":"e.g. Trailer tires, insurance, yard signs"}"></label>
+      <label class="f">Category<select id="l-cat">${cats(ledDraft.kind)}</select></label>
+      ${ledDraft.kind==="income"?"":`<label class="f">Type<select id="l-type" ${ledDraft.costType?'data-touched="1"':""}>${COST_TYPES.map(([k,lb])=>opt(k,lb,costTypeOf(ledDraft))).join("")}</select></label>`}
+      <p class="sub" style="margin:0">${ledDraft.kind==="income"?"Money that isn't a job payment: resale, scrap runs, etc.":"Costs not tied to one job. Gas, dump fees and helper pay for a specific job go on that job."}</p>
+    </fieldset></div>
+    <div class="sheet-f">${l?`<button class="btn danger" data-act="deleteLedger" id="delbtn">Delete</button>`:""}<span class="sp"></span><button class="btn" data-act="closeSheet">Cancel</button><button class="btn primary" data-act="saveLedger">Save</button></div>
+  </div></div>`;
+  $("#sheet").hidden=false; document.body.style.overflow="hidden";
+  setTimeout(()=>$(l?"#l-desc":"#l-amt")?.focus(),50);
+}
+async function saveLedger(){
+  const x={...ledDraft, date:$("#l-date").value||today(), amount:Number($("#l-amt").value)||0, description:$("#l-desc").value.trim(), category:$("#l-cat").value};
+  if($("#l-paid")) x.planned = !$("#l-paid").checked;
+  if(x.category==="Dump fees"){ x.lbs=$("#l-lbs").value===""?"":Number($("#l-lbs").value); x.mattresses=$("#l-matt").value===""?"":Number($("#l-matt").value); }
+  const ty=$("#l-type"); if(ty){ if(ty.value!==CAT_TYPE[x.category]) x.costType=ty.value; else delete x.costType; }
+  if(!x.amount){ toast("Enter an amount."); return; }
+  try{ await put("ledger", x); }catch{ return; }
+  toast(x.kind==="income"?"Income saved":"Expense saved"); closeSheet();
+}
+
+/* settings save */
+async function saveSettings(){
+  const s = structuredClone(state.settings), n=id=>Number($(id).value);
+  s.businessName=$("#s-name").value.trim(); s.reviewLink=$("#s-review").value.trim();
+  s.fuelPerJob=n("#s-fuel")||0;
+  s.trailer=$("#s-trailer").value.trim(); s.fullLoadYards=n("#s-yards")||0; s.useAdjustments=$("#s-useadj").checked;
+  s.dumpSite=$("#s-dumpsite").value.trim(); s.dumpMin=n("#s-dumpmin")||0; s.dumpMinLbs=n("#s-dumpminlbs")||0;
+  s.dumpPerTon=n("#s-dumpton")||0; s.mattressDumpFee=n("#s-dumpmatt")||0; s.fullLoadLbs=n("#s-fullload")||2000;
+  s.helpers=$("#s-helpers").value.split(",").map(x=>x.trim()).filter(Boolean);
+  s.phone=$("#s-phone").value.trim(); s.email=$("#s-email").value.trim(); s.city=$("#s-city").value.trim();
+  s.taxRate=n("#s-tax")||0; s.receiptNote=$("#s-note").value.trim();
+  s.ownerHourly=n("#s-hourly")||0; s.costPerMile=n("#s-mile")||0;
+  s.volumes.forEach((v,i)=>v.price=n("#s-vol-"+i)||0);
+  s.materials.forEach((v,i)=>v.mult=n("#s-mat-"+i)||1);
+  s.weights.forEach((v,i)=>v.add=n("#s-wt-"+i)||0);
+  s.access.forEach((v,i)=>v.add=n("#s-ac-"+i)||0);
+  s.items = s.items.map((v,i)=>({...v, label:$("#s-itl-"+i).value.trim(), price:n("#s-it-"+i)||0})).filter(v=>v.label);
+  const nl=$("#s-itl-new").value.trim(); if(nl) s.items.push({key:"i"+uid(), label:nl, price:n("#s-it-new")||0});
+  try{ await saveSettingsDoc(s); state.settings=s; toast("Settings saved"); $("#main").innerHTML=""; render(); }
+  catch{ toast("Couldn't save settings. Try again."); }
+}
+
+/* ---------- website form email import ---------- */
+const LABELS = [
+  [/^(full\s*name|your\s*name|name|customer\s*name|contact\s*name|client\s*name)$/i,"name"],
+  [/^first(\s*name)?$/i,"first"], [/^last(\s*name)?$/i,"last"],
+  [/^(e-?mail(\s*address)?|your\s*e-?mail)$/i,"email"],
+  [/^(phone(\s*number)?|your\s*phone|tel(ephone)?|mobile|cell(\s*phone)?|best\s*(phone|number).*)$/i,"phone"],
+  [/^((service|pickup|pick-up|job|street|property|your)?\s*address(\s*line\s*\d)?|street|location|city|state|zip(\s*code)?|postal\s*code)$/i,"addr"],
+  [/^(message|comments?|details|description|project\s*details|your\s*message|notes?|what.*(remove|haul|need|pick).*|items?(\s*to\s*(be\s*)?removed?)?|tell\s*us.*|additional\s*(info|information|details).*|job\s*details)$/i,"msg"],
+  [/^((preferred|pickup|service|requested|best)\s*)?(date|time|day)s?(\s*(preferred|requested))?$/i,"date"],
+  [/^(how\s*did\s*you\s*(hear|find).*|referr(al|ed\s*by).*|source)$/i,"heard"]
+];
+const labelKey = l => { l=l.replace(/[*:\s]+$/,"").trim(); if(!l || l.length>45) return null; for(const [re,k] of LABELS) if(re.test(l)) return k; return null; };
+const FOOTER = /^(sent\s+from|this\s+(e-?mail|message)\s+was|powered\s+by|--+$|©|unsubscribe|view\s+(this\s+)?entry|entry\s*(id|#))/i;
+function parseFormEmail(text){
+  const o={name:"",first:"",last:"",email:"",phone:"",addr:[],msg:[],date:"",heard:""};
+  let cur=null;
+  for(let line of (text||"").replace(/\r/g,"").split("\n")){
+    line=line.replace(/^[>\s]+/,"").trim();
+    if(!line) continue;
+    if(FOOTER.test(line)) { cur=null; continue; }
+    const m=line.match(/^([^:]{1,45}):\s*(.*)$/), mk=m&&labelKey(m[1]);
+    if(mk){ cur=mk; if(m[2]) put(mk,m[2]); continue; }
+    const k=labelKey(line); if(k){ cur=k; continue; }
+    if(cur) put(cur,line);
+  }
+  function put(k,v){ if(k==="addr"||k==="msg") o[k].push(v); else if(!o[k]){ o[k]=v; cur=null; } }
+  const full = text||"";
+  if(!o.email){ const e=full.match(/[\w.+-]+@[\w-]+\.[\w.-]+/); if(e) o.email=e[0]; }
+  if(!o.phone){ const p=full.match(/(\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/); if(p) o.phone=p[0].trim(); }
+  const name = o.name || [o.first,o.last].filter(Boolean).join(" ");
+  return { name, email:o.email, phone:o.phone, address:o.addr.join(", "), message:o.msg.join("\n"), date:o.date, heard:o.heard };
+}
+const digits = s => (s||"").replace(/\D/g,"").slice(-10);
+function applyImport(r, okMsg){
+  const msgEl=$("#importmsg");
+  if(!r || !(r.name||r.phone||r.email||r.message)){ if(msgEl) msgEl.textContent = SAMPLE?"Couldn't find the form fields — try “Read it with Claude”.":"Couldn't find the form fields — fill in by hand."; return; }
+  const match = state.customers.find(c => (r.phone && digits(c.phone) && digits(c.phone)===digits(r.phone)) || (r.email && c.email && c.email.toLowerCase()===r.email.toLowerCase()));
+  if(match){ $("#f-cust").value=match.id; }
+  else { $("#f-cust").value="__new"; $("#f-cname").value=r.name||""; $("#f-cphone").value=r.phone||""; $("#f-cemail").value=r.email||""; }
+  if(r.address) $("#f-addr").value=r.address; else if(match?.address) $("#f-addr").value=match.address;
+  const msg=(r.message||"").trim();
+  if(msg) $("#f-title").value = msg.split(/(?<=[.!?])\s|\n/)[0].slice(0,90);
+  $("#f-notes").value = [msg, r.date?`Preferred date: ${r.date}`:"", r.heard?`Heard about us: ${r.heard}`:""].filter(Boolean).join("\n");
+  $("#f-source").value = match ? "Repeat customer" : "Website form";
+  $("#f-status").value = "lead"; if(!$("#f-follow").value) $("#f-follow").value = today();
+  updateLive();
+  if(msgEl) msgEl.textContent = match ? `Matched existing customer ${match.name}. ${okMsg}` : okMsg;
+}
+async function aiImport(btn){
+  const text=$("#f-import").value.trim(); if(!text) return toast("Paste the email first.");
+  btn.disabled=true; const label=btn.textContent; btn.textContent="Reading…";
+  try{
+    const r = await SAMPLE.json(`This is a website contact-form email sent to a junk removal company. Extract the customer's details. Reply with only a JSON object: {"name": string, "phone": string, "email": string, "address": string, "message": string (what they want removed, in their words), "date": string (preferred date/time if given, else ""), "heard": string (how they heard about us, else "")}. Use "" for anything missing. Ignore the email's footer and the company's own contact details.\n\nEMAIL:\n${text.slice(0,8000)}`, {modelTier:"quick"});
+    applyImport(r && typeof r==="object" ? r : null, "Filled in by Claude — check it, then Save.");
+  }catch(e){
+    const m = {not_granted:"Claude reading wasn't allowed. Fill in by hand.", rate_limited:"Too many requests — try again in a minute.", invalid_json:"Claude couldn't read that email. Try again or fill in by hand."}[e?.code] || "Couldn't read that email. Try again.";
+    if(e?.code==="not_granted"||e?.code==="sampling_disabled") btn.remove();
+    $("#importmsg").textContent=m;
+  }finally{ if(btn.isConnected){ btn.disabled=false; btn.textContent=label; } }
+}
+
+/* ---------- receipts & invoices ---------- */
+let rcptCanvas=null;
+const loadImg = src => new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; });
+const loadScript = src => new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src)) return res(); const s=document.createElement("script"); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+function receiptData(){
+  const d=draft, s=state.settings, c=cust($("#f-cust")?.value) || cust(d.customerId);
+  const price = Number(d.finalPrice) || d.quoteTotal || 0;
+  let lines = quoteLines(d.quote).map(l=>({...l}));
+  if(!lines.length) lines=[{label:"Junk removal & hauling", amount:price}];
+  const diff = price - sum(lines,l=>l.amount);
+  if(Math.abs(diff)>=0.5) lines.push({label: diff<0?"Discount":"Price adjustment", amount:diff});
+  const tax = price*(Number(s.taxRate)||0)/100;
+  const date = d.date || today();
+  const kind = d.paid ? "Receipt" : "Invoice";
+  const no = (d.paid?"R-":"INV-") + date.replace(/-/g,"").slice(2) + "-" + d.id.slice(-4).toUpperCase();
+  const dn = (Number(d.disposal?.donated)||0) + (Number(d.disposal?.recycled)||0);
+  return {d,s,c,price,lines,tax,total:price+tax,date,kind,no,diverted:dn>0&&dn<=100?dn:0};
+}
+function wrap(x, text, maxW){
+  const words=String(text).split(/\s+/), out=[]; let line="";
+  for(const w of words){ const t=line?line+" "+w:w; if(x.measureText(t).width>maxW && line){ out.push(line); line=w; } else line=t; }
+  if(line) out.push(line); return out;
+}
+async function drawReceipt(){
+  const r=receiptData(), {s,c}=r, W=1000, P=64, ACC="#C94A0B", INK="#1A1F1B", GREY="#6B736D", LINE="#DADDD6";
+  const DISP='"Barlow Condensed","Arial Narrow",Arial,sans-serif', BODY='"Public Sans",Arial,sans-serif';
+  try{ await Promise.all([document.fonts.load(`700 40px ${DISP}`),document.fonts.load(`400 20px ${BODY}`),document.fonts.load(`700 20px ${BODY}`)]); }catch{}
+  const cv=document.createElement("canvas"); cv.width=W; cv.height=3000; const x=cv.getContext("2d");
+  x.fillStyle="#fff"; x.fillRect(0,0,W,3000); x.textBaseline="alphabetic";
+  let y=P, left=P, logoH=0;
+  if(s.logo){ try{ const img=await loadImg(blobUrl(s.logo)); const sc=Math.min(240/img.width, 170/img.height); logoH=img.height*sc; x.drawImage(img,P,y,img.width*sc,logoH); left=P+img.width*sc+28; }catch{} }
+  x.fillStyle=INK; x.font=`700 38px ${DISP}`; x.fillText((s.businessName||"Junk Removal").toUpperCase(), left, y+36);
+  x.fillStyle=GREY; x.font=`400 19px ${BODY}`;
+  [s.phone, s.email, s.city].filter(Boolean).forEach((t,i)=>x.fillText(t,left,y+66+i*26));
+  x.textAlign="right"; x.fillStyle=ACC; x.font=`700 52px ${DISP}`; x.fillText(r.kind.toUpperCase(), W-P, y+44);
+  x.fillStyle=GREY; x.font=`400 19px ${BODY}`; x.fillText("No. "+r.no, W-P, y+76); x.fillText(fmtDate(r.date), W-P, y+102); x.textAlign="left";
+  y += Math.max(150, logoH+28); x.fillStyle=LINE; x.fillRect(P,y,W-2*P,2); y+=44;
+  const col2=W/2+20;
+  x.fillStyle=GREY; x.font=`700 15px ${BODY}`; x.fillText("BILLED TO",P,y); x.fillText("JOB",col2,y);
+  x.fillStyle=INK; x.font=`700 22px ${BODY}`; x.fillText(c?.name||"Customer",P,y+32);
+  x.font=`400 19px ${BODY}`; x.fillStyle=INK;
+  let ly=y+60; wrap(x, r.d.address||c?.address||"", W/2-P-40).forEach(t=>{x.fillText(t,P,ly); ly+=26;}); if(c?.phone){ x.fillText(c.phone,P,ly); ly+=26; }
+  let ry=y+32; x.font=`400 19px ${BODY}`; wrap(x, r.d.title||"Junk removal", W-P-col2).slice(0,3).forEach(t=>{x.fillText(t,col2,ry); ry+=26;});
+  x.fillStyle=GREY; x.fillText("Service date: "+fmtDate(r.date), col2, ry); ry+=26;
+  y=Math.max(ly,ry)+30;
+  x.fillStyle=INK; x.fillRect(P,y,W-2*P,2); y+=34;
+  x.fillStyle=GREY; x.font=`700 15px ${BODY}`; x.fillText("DESCRIPTION",P,y); x.textAlign="right"; x.fillText("AMOUNT",W-P,y); x.textAlign="left"; y+=16;
+  x.font=`400 20px ${BODY}`;
+  for(const l of r.lines){
+    const parts=wrap(x,l.label,W-2*P-180); y+=18;
+    parts.forEach((t,i)=>{ x.fillStyle=INK; x.fillText(t,P,y+22+i*28); });
+    x.textAlign="right"; x.fillText(money(l.amount),W-P,y+22); x.textAlign="left";
+    y += 22 + (parts.length-1)*28 + 16; x.fillStyle=LINE; x.fillRect(P,y,W-2*P,1);
+  }
+  y+=40; const lx=W-P-340;
+  const tot=(k,v,big)=>{ x.fillStyle=big?INK:GREY; x.font=big?`700 30px ${DISP}`:`400 20px ${BODY}`; x.fillText(k,lx,y); x.textAlign="right"; x.fillStyle=INK; x.font=big?`700 40px ${DISP}`:`600 20px ${BODY}`; x.fillText(v,W-P,y); x.textAlign="left"; y+=big?52:34; };
+  if(r.tax){ tot("Subtotal",money(r.price)); tot(`Sales tax (${s.taxRate}%)`, "$"+r.tax.toFixed(2)); tot("TOTAL", "$"+r.total.toFixed(2), true); }
+  else tot("TOTAL", money(r.total), true);
+  y+=6;
+  if(r.d.paid){ x.fillStyle="#2B7A4C"; x.font=`700 26px ${DISP}`; x.textAlign="right"; x.fillText(`PAID IN FULL · ${(r.d.payMethod||"Cash").toUpperCase()}`, W-P, y); x.textAlign="left"; }
+  else { x.fillStyle=ACC; x.font=`700 26px ${DISP}`; x.textAlign="right"; x.fillText(`BALANCE DUE: ${r.tax?"$"+r.total.toFixed(2):money(r.total)}`, W-P, y); x.textAlign="left"; }
+  y+=60;
+  if(r.diverted){ x.fillStyle="#EAF3EE"; x.fillRect(P,y,W-2*P,58); x.fillStyle="#2B7A4C"; x.font=`600 19px ${BODY}`; x.fillText(`${Math.round(r.diverted)}% of your haul was donated or recycled instead of going to the landfill.`, P+20, y+36); y+=90; }
+  x.fillStyle=LINE; x.fillRect(P,y,W-2*P,1); y+=40;
+  x.fillStyle=INK; x.font=`600 20px ${BODY}`; wrap(x, s.receiptNote||"Thank you for your business!", W-2*P).forEach(t=>{x.fillText(t,P,y); y+=28;});
+  if(s.reviewLink){ x.fillStyle=GREY; x.font=`400 18px ${BODY}`; x.fillText("Happy with the job? Leave us a review: "+s.reviewLink, P, y+4); y+=30; }
+  y+=P-20;
+  const out=document.createElement("canvas"); out.width=W; out.height=Math.ceil(y); out.getContext("2d").drawImage(cv,0,0);
+  return out;
+}
+function receiptText(){
+  const r=receiptData(), s=r.s;
+  return [`${s.businessName||"Junk Removal"} — ${r.kind} ${r.no}`, `${fmtDate(r.date)} · ${r.c?.name||""}`, r.d.title||"", "",
+    ...r.lines.map(l=>`${l.label}: ${money(l.amount)}`),
+    r.tax?`Sales tax: $${r.tax.toFixed(2)}`:"", `Total: ${r.tax?"$"+r.total.toFixed(2):money(r.total)}`,
+    r.d.paid?`Paid in full (${r.d.payMethod||"Cash"}). Thank you!`:`Balance due: ${r.tax?"$"+r.total.toFixed(2):money(r.total)}`,
+    r.diverted?`${Math.round(r.diverted)}% of your haul was donated or recycled.`:"", s.reviewLink?`Leave us a review: ${s.reviewLink}`:""].filter((l,i,a)=>l!==""||a[i-1]!=="").join("\n").trim();
+}
+async function openReceipt(){
+  $("#receipt")?.remove();
+  const ov=document.createElement("div"); ov.id="receipt"; ov.className="lightbox rcpt"; ov.dataset.act="closeReceipt";
+  ov.innerHTML=`<div class="rcpt-panel" role="dialog" aria-modal="true" aria-label="Receipt preview"><div class="rcpt-h"><h2>${draft.paid?"Receipt":"Invoice"}</h2><button class="btn ghost iconbtn" data-act="closeReceipt" aria-label="Close">✕</button></div>
+    <div id="rcpt-img" class="sub" style="padding:40px 0;text-align:center">Drawing…</div>
+    <div class="rcpt-acts">${DOWNLOADS?`<button class="btn primary sm" data-act="rcptPng">Save image (to text it)</button><button class="btn sm" data-act="rcptPdf">Save PDF (to print/email)</button>`:""}<button class="btn sm" data-act="rcptText">Copy as text</button></div>
+    ${DOWNLOADS?"":`<p class="sub" style="margin:0">Saving the image or PDF works on the published page.</p>`}
+    ${!state.settings.logo||!state.settings.businessName?`<p class="sub" style="margin:0">Add your logo, business name and phone in Settings → Receipts & invoices.</p>`:""}
+    ${draft.paid?"":`<p class="sub" style="margin:0">Tick “Paid” on the job to turn this into a paid receipt.</p>`}</div>`;
+  document.body.appendChild(ov);
+  try{ rcptCanvas=await drawReceipt(); const box=$("#rcpt-img"); if(box){ box.className=""; box.style.cssText=""; box.innerHTML=""; rcptCanvas.className="rcpt-canvas"; box.appendChild(rcptCanvas); } }
+  catch{ const box=$("#rcpt-img"); if(box) box.textContent="Couldn't draw the receipt. Use “Copy as text”."; }
+}
+async function saveReceipt(fmt){
+  if(!DOWNLOADS || !rcptCanvas) return;
+  const r=receiptData(), base=`${r.kind}-${(r.c?.name||"customer").replace(/[^\w]+/g,"-")}-${r.date}`;
+  try{
+    if(fmt==="png"){
+      const blob=await new Promise(res=>rcptCanvas.toBlob(res,"image/png"));
+      await DOWNLOADS.save({filename:base+".png", data:blob});
+    } else {
+      toast("Preparing PDF…");
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+      const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"pt",format:"letter"});
+      let w=540, h=w*rcptCanvas.height/rcptCanvas.width; if(h>720){ h=720; w=h*rcptCanvas.width/rcptCanvas.height; }
+      doc.addImage(rcptCanvas.toDataURL("image/jpeg",.92),"JPEG",(612-w)/2,36,w,h);
+      await DOWNLOADS.save({filename:base+".pdf", data:doc.output("blob")});
+    }
+    toast("Saved");
+  }catch(e){
+    if(e?.code==="declined") return;
+    toast(e?.code==="rate_limited"?"A save is already open — finish that first.":"Couldn't save the file. Try “Copy as text” instead.");
+  }
+}
+async function uploadLogo(f){
+  if(!ASSETS) return;
+  try{
+    toast("Uploading logo…");
+    const r=await ASSETS.upload(f, f.type?{}:{type:"image/png"});
+    const old=state.settings.logo;
+    await saveSettingsDoc({...state.settings, logo:r.id}); state.settings.logo=r.id;
+    $(".logo-prev").innerHTML=`<img src="${esc(r.url)}" alt="Your logo">`;
+    if(old){ try{ await ASSETS.delete(old); }catch{} }
+    toast("Logo saved");
+  }catch(e){ toast(e?.code==="unsupported_type"?"Use a PNG, JPG, WebP or SVG logo.":e?.code==="too_large"?"Logo file is too large.":"Logo upload failed — try again."); }
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", async e=>{
+  const el = e.target.closest("[data-act]"); if(!el) return;
+  const a = el.dataset.act;
+  if(a==="scrim"){ if(e.target===el) closeSheet(); return; }
+  if(a==="copy") return copyText(el.dataset.text);
+  if(a==="copyQuote"){ readQuote(); if(!draft.quote.volume) return toast("Pick a truck volume first."); return copyText(quoteMsg({...draft, customerId:$("#f-cust").value, title:$("#f-title").value.trim()}, draft.quoteTotal), "Quote text copied — paste it into a text"); }
+  if(a==="copyReview"){ const t=reviewMsg({...draft, customerId:$("#f-cust").value}); $("#f-review").checked=true; return copyText(t,"Review request copied"); }
+  if(a==="nav") return go(el.dataset.view);
+  if(a==="newJob"){ importOpen=false; return openJob(null); }
+  if(a==="importJob"){ importOpen=true; openJob(null); if(FINE_POINTER) setTimeout(()=>$("#f-import")?.focus(),60); importOpen=false; return; }
+  if(a==="toggleImport"){ const body=$("#importbody"), open=body.hidden; body.hidden=!open; el.setAttribute("aria-expanded",open); el.querySelector("span").textContent=open?"▴":"▾"; if(open&&FINE_POINTER) $("#f-import").focus(); return; }
+  if(a==="parseImport") return applyImport(parseFormEmail($("#f-import").value), "Filled in — check it, then Save.");
+  if(a==="aiImport") return aiImport(el);
+  if(a==="receipt"){ readDraft(); return openReceipt(); }
+  if(a==="closeReceipt"){ if(e.target===el || el.tagName==="BUTTON") $("#receipt").remove(); return; }
+  if(a==="rcptPng") return saveReceipt("png");
+  if(a==="rcptPdf") return saveReceipt("pdf");
+  if(a==="rcptText") return copyText(receiptText(), "Receipt text copied");
+  if(a==="rmLogo"){ const old=state.settings.logo; await saveSettingsDoc({...state.settings, logo:""}); state.settings.logo=""; $(".logo-prev").innerHTML='<span class="sub">No logo</span>'; el.remove(); if(ASSETS&&old){ try{await ASSETS.delete(old);}catch{} } return toast("Logo removed"); }
+  if(a==="openJob") return openJob(el.dataset.id);
+  if(a==="openCust") return openCust(el.dataset.id);
+  if(a==="newCust") return openCust(null);
+  if(a==="jobForCust"){ const c=cust(el.dataset.id); return openJob(null,{customerId:c.id, address:c.address||"", source: c.type!=="Residential"||custStats(c).done.length?"Repeat customer":c.source||"Referral"}); }
+  if(a==="closeSheet") return closeSheet();
+  if(a==="saveJob") return saveJob();
+  if(a==="saveCust") return saveCust();
+  if(a==="newLedger") return openLedger(null, el.dataset.kind);
+  if(a==="newDumpRun") return openLedger(null, "expense", {category:"Dump fees", description:`Dump run${state.settings.dumpSite?" — "+state.settings.dumpSite:""}`});
+  if(a==="openLedger") return openLedger(el.dataset.id);
+  if(a==="saveLedger") return saveLedger();
+  if(a==="deleteLedger"){
+    if(!delArm){ delArm=true; el.classList.add("armed"); el.textContent="Tap again to delete"; return; }
+    await remove("ledger", ledDraft.id); toast("Deleted"); return closeSheet();
+  }
+  if(a==="deleteJob"||a==="deleteCust"){
+    if(!delArm){ delArm=true; el.classList.add("armed"); el.textContent="Tap again to delete"; setTimeout(()=>{ if(el.isConnected){delArm=false; el.classList.remove("armed"); el.textContent="Delete";} },3000); return; }
+    if(a==="deleteJob"){ const photos=draft.photos.map(p=>p.id); await remove("jobs", draft.id); if(ASSETS) for(const id of [...photos,...removedPhotos]){ try{await ASSETS.delete(id);}catch{} } toast("Job deleted"); }
+    else { await remove("customers", custDraft.id); toast("Customer deleted — their jobs were kept"); }
+    return closeSheet();
+  }
+  if(a==="quickDone"){ openJob(el.dataset.id); $("#f-status").value="done"; $("#f-paid").checked=true; if(!$("#f-final").value && draft.quoteTotal) $("#f-final").value=draft.quoteTotal; updateLive(); $("#f-final").scrollIntoView({block:"center"}); toast("Check price & costs, then Save"); return; }
+  if(a==="estCosts"){
+    readQuote(); const q=draft.quote, s=state.settings, f=VOL_FRACTION[q.volume]; if(!f) return toast("Pick a truck volume first.");
+    const mf={household:1,yard:.8,construction:1.5,heavy:3}[q.material]||1, wf={light:.6,normal:1,heavy:1.4,xheavy:2}[q.weight]||1;
+    const lbs=Math.round(f*(s.fullLoadLbs||2000)*mf*wf), matt=Number(q.items?.mattress)||0;
+    if(!$("#f-c-dump").value) $("#f-c-dump").value=dumpFee(lbs,matt);
+    if(!$("#f-c-fuel").value) $("#f-c-fuel").value=s.fuelPerJob;
+    updateLive(); toast(`Estimated ~${lbs.toLocaleString()} lbs${matt?` + ${matt} mattress${matt>1?"es":""}`:""}. Enter the ticket weight after you dump.`); return;
+  }
+  if(a==="rmPhoto"){ const [p]=draft.photos.splice(Number(el.dataset.i),1); if(p) removedPhotos.push(p.id); renderPhotos(); return; }
+  if(a==="lightbox"){ $("#lightimg").src=el.dataset.src; $("#lightbox").hidden=false; return; }
+  if(a==="closeLightbox"){ $("#lightbox").hidden=true; return; }
+  if(a==="pipe"){ state.pipe=el.dataset.k; return render(); }
+  if(a==="month"){ state.month=shiftMonth(state.month||today().slice(0,7), Number(el.dataset.n)); return render(); }
+  if(a==="saveSettings") return saveSettings();
+  if(a==="clearExamples"){
+    if(!delArm){ delArm=true; el.classList.add("armed"); el.textContent="Tap again to remove examples"; return; }
+    delArm=false;
+    for(const j of state.jobs.filter(x=>x.example)) await remove("jobs", j.id);
+    for(const c of state.customers.filter(x=>x.example)) await remove("customers", c.id);
+    toast("Example data removed"); $("#main").innerHTML=""; render(); return;
+  }
+});
+document.addEventListener("input", e=>{
+  if(e.target.id==="pipe-q"){ state.pipeQ=e.target.value; render(); return; }
+  if(e.target.id==="cust-q"){ state.custQ=e.target.value; render(); return; }
+  if(e.target.id==="l-lbs" || e.target.id==="l-matt"){ const lbs=Number($("#l-lbs").value)||0, mt=Number($("#l-matt").value)||0; if(lbs||mt) $("#l-amt").value = dumpFee(lbs, mt); return; }
+  if(e.target.id==="f-dumplbs" && draft){ const lbs=Number(e.target.value)||0; readQuote(); $("#f-c-dump").value = lbs ? dumpFee(lbs, Number(draft.quote.items?.mattress)||0) : ""; }
+  if(e.target.closest("#sheet") && draft) updateLive();
+});
+document.addEventListener("change", e=>{
+  if(e.target.id==="l-type"){ e.target.dataset.touched="1"; return; }
+  if(e.target.id==="l-cat"){ $("#l-dumpwrap").hidden = e.target.value!=="Dump fees"; }
+  if(e.target.id==="l-cat"){ const ty=$("#l-type"); if(ty && !ty.dataset.touched && CAT_TYPE[e.target.value]) ty.value=CAT_TYPE[e.target.value]; return; }
+  if(e.target.id==="s-logo-up"){ const f=e.target.files[0]; e.target.value=""; if(f) uploadLogo(f); return; }
+  if(e.target.matches('input[type="file"][data-tag]')){ const fs=[...e.target.files]; e.target.value=""; if(fs.length) addPhotos(fs, e.target.dataset.tag); return; }
+  if(e.target.id==="f-cust" && draft){ const c=cust(e.target.value); if(c && !$("#f-addr").value && c.address) $("#f-addr").value=c.address; if(c && isNew && (c.type!=="Residential"||custStats(c).done.length)) $("#f-source").value="Repeat customer"; }
+  if(e.target.closest("#sheet") && draft) updateLive();
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ if($("#receipt")) $("#receipt").remove(); else if(!$("#lightbox").hidden) $("#lightbox").hidden=true; else if(!$("#sheet").hidden) closeSheet(); } });
+
+/* ---------- preview data (only when the page can't reach its database) ---------- */
+function previewData(){
+  const t=today(), iso=(d)=>new Date(addDays(t,d)+"T10:00:00").toISOString();
+  const C=[["pc1","Dana Whitfield","(555) 214-8830","Residential","Referral"],["pc2","Marcus Reyes","(555) 390-1177","Property manager","Website form"],["pc3","Priya Shah","(555) 662-4410","Realtor","Referral"],["pc4","Tom Becker","(555) 780-2295","Residential","Phone call"],["pc5","Lena Ortiz","(555) 441-9036","Residential","Text"]]
+    .map(([id,name,phone,type,source])=>({id,name,phone,type,source,email:"",address:"",notes:"",createdAt:iso(-60),example:true}));
+  const J=(id,cid,status,title,addr,src,d,vol,extra={})=>({id,customerId:cid,status,title,address:addr,source:src,createdAt:iso(d-2),date:["booked","done"].includes(status)?addDays(t,d):"",window:status==="booked"?"8–10 AM":"",quote:{volume:vol,material:"household",weight:"normal",access:[],flights:1,items:{},adjust:0},quoteTotal:calcQuote({volume:vol,material:"household",weight:"normal",access:[],items:{}}),costs:{},disposal:{},photos:[],example:true,...extra});
+  state.customers=C;
+  state.jobs=[
+    J("pj1","pc2","done","Unit 4B move-out cleanout","118 Alder St, Unit 4B","Repeat customer",-20,"3/4",{paid:true,payMethod:"Cash",costs:{dump:85,fuel:15},disposal:{donated:30,recycled:20,landfill:50,donatedTo:"Habitat ReStore"},reviewAsked:true}),
+    J("pj2","pc1","done","Garage cleanout + old fridge","42 Birch Ln","Referral",-6,"1/2",{paid:true,payMethod:"Cash",costs:{dump:55,fuel:15},disposal:{donated:10,recycled:40,landfill:50}}),
+    J("pj3","pc3","booked","Estate cleanout before listing","9 Hollow Rd","Referral",1,"full"),
+    J("pj4","pc4","booked","Hot tub removal","301 Pine Ct","Phone call",0,"1/2"),
+    J("pj5","pc5","quoted","Couch and two mattresses","77 Cedar Ave","Text",-4,"1/8"),
+    J("pj6","pc2","lead","Tenant left furniture, Unit 2A","118 Alder St, Unit 2A","Repeat customer",-1,""),
+    J("pj7","pc4","done","Basement debris","301 Pine Ct","Phone call",-40,"full",{paid:true,payMethod:"Cash",costs:{dump:120,fuel:20,labor:80}})
+  ];
+}
+
+/* ---------- on-device storage ----------
+   Stand-ins for the database, photo store and file saving, backed by IndexedDB on this device.
+   They keep the same call shapes the rest of the app already uses. */
+const LOCAL = (()=>{
+  let dbp;
+  const open = () => dbp || (dbp = new Promise((res,rej)=>{
+    const r = indexedDB.open("hauldesk", 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore("docs"); r.result.createObjectStore("blobs"); };
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  const tx = (store, mode, fn) => open().then(db => new Promise((res,rej)=>{
+    const t = db.transaction(store, mode); fn(t.objectStore(store));
+    t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error("aborted"));
+  }));
+  const all = store => open().then(db => new Promise((res,rej)=>{
+    const out = {}; const c = db.transaction(store).objectStore(store).openCursor();
+    c.onsuccess = () => { const cur = c.result; if(cur){ out[cur.key] = cur.value; cur.continue(); } else res(out); };
+    c.onerror = () => rej(c.error);
+  }));
+  return { tx, all };
+})();
+
+const DOCS = {};          // "jobs/abc" -> body
+const BLOB_URLS = {};     // asset id -> object URL
+const blobUrl = id => BLOB_URLS[id] || "";
+const listeners = [];     // {path, isDoc, fn}
+const clone = o => o == null ? o : JSON.parse(JSON.stringify(o));
+
+function colSnap(col){
+  const pre = col + "/";
+  const docs = Object.keys(DOCS).filter(k => k.startsWith(pre) && !k.slice(pre.length).includes("/")).sort()
+    .map(k => { const id = k.slice(pre.length), body = DOCS[k]; return { id, exists:true, data:()=>clone(body) }; });
+  return { docs, size:docs.length, empty:!docs.length, docChanges:()=>[], metadata:{fromCache:false, hasPendingWrites:false} };
+}
+function docSnap(path){
+  const body = DOCS[path];
+  return { id:path.split("/").pop(), exists: body!==undefined, data:()=>clone(body), metadata:{fromCache:false, hasPendingWrites:false} };
+}
+function notify(path){
+  const col = path.slice(0, path.lastIndexOf("/"));
+  for(const l of listeners){
+    if(l.isDoc ? l.path===path : l.path===col) queueMicrotask(()=>l.fn(l.isDoc ? docSnap(l.path) : colSnap(l.path)));
+  }
+}
+function docRef(path){
+  return {
+    id: path.split("/").pop(), path,
+    async get(){ return docSnap(path); },
+    async set(body){
+      const b = clone(body);
+      try{ await LOCAL.tx("docs","readwrite", s=>s.put(b, path)); }
+      catch(e){ throw {code:"quota_exceeded", message:"This device is out of storage."}; }
+      DOCS[path] = b; notify(path);
+    },
+    async update(body){ await this.set({...(DOCS[path]||{}), ...body}); },
+    async delete(){ await LOCAL.tx("docs","readwrite", s=>s.delete(path)); delete DOCS[path]; notify(path); },
+    onSnapshot(fn){ const l={path, isDoc:true, fn}; listeners.push(l); queueMicrotask(()=>fn(docSnap(path))); return ()=>{ const i=listeners.indexOf(l); if(i>=0) listeners.splice(i,1); }; }
+  };
+}
+function colRef(col){
+  return {
+    path: col,
+    doc: id => docRef(col + "/" + (id || uid())),
+    async add(body){ const r = docRef(col + "/" + uid()); await r.set(body); return r; },
+    async get(){ return colSnap(col); },
+    onSnapshot(fn){ const l={path:col, isDoc:false, fn}; listeners.push(l); queueMicrotask(()=>fn(colSnap(col))); return ()=>{ const i=listeners.indexOf(l); if(i>=0) listeners.splice(i,1); }; }
+  };
+}
+const LOCAL_DB = { doc: docRef, collection: colRef };
+
+const hexId = () => [...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,"0")).join("");
+const LOCAL_ASSETS = {
+  async upload(blob, opts={}){
+    const type = opts.type || blob.type || "application/octet-stream";
+    const b = blob.type === type ? blob : new Blob([blob], {type});
+    const id = hexId();
+    try{ await LOCAL.tx("blobs","readwrite", s=>s.put(b, id)); }
+    catch(e){ throw {code:"quota_or_state", message:"This device is out of storage."}; }
+    BLOB_URLS[id] = URL.createObjectURL(b);
+    return { id, url: BLOB_URLS[id], sizeBytes: b.size, contentType: type };
+  },
+  async delete(id){
+    await LOCAL.tx("blobs","readwrite", s=>s.delete(id));
+    if(BLOB_URLS[id]){ URL.revokeObjectURL(BLOB_URLS[id]); delete BLOB_URLS[id]; }
+    return { deleted:true };
+  },
+  async list(){ return { assets:[], usage:{} }; }
+};
+
+/* Saving a file: on phones, open the share sheet (Save to Files, Messages, email…); elsewhere, download it. */
+async function saveFile(filename, data, type){
+  const file = new File([data], filename, {type: type || data.type || "application/octet-stream"});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file]}); return; }
+    catch(e){ if(e && e.name==="AbortError") throw {code:"declined"}; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = filename;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+const LOCAL_DOWNLOADS = { save: ({filename, data}) => saveFile(filename, data) };
+
+/* ---------- backup & restore ---------- */
+const blobToDataURL = b => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(r.error); r.readAsDataURL(b); });
+async function makeBackup(){
+  try{
+    toast("Preparing backup…");
+    const blobs = await LOCAL.all("blobs"), out = {};
+    for(const id in blobs) out[id] = await blobToDataURL(blobs[id]);
+    const data = JSON.stringify({app:"haul-desk", v:1, saved:new Date().toISOString(), docs:DOCS, blobs:out});
+    await saveFile(`haul-desk-backup-${today()}.json`, data, "application/json");
+    toast("Backup ready — keep it somewhere safe (Files, iCloud, Google Drive)");
+  }catch(e){ if(e?.code!=="declined") toast("Couldn't make the backup. Try again."); }
+}
+let pendingRestore = null;
+function readRestore(file){
+  const r = new FileReader();
+  r.onload = () => {
+    const box = $("#hd-restore-box");
+    try{
+      const b = JSON.parse(r.result);
+      if(!b || b.app!=="haul-desk" || !b.docs) throw 0;
+      const keys = Object.keys(b.docs), n = p => keys.filter(k=>k.startsWith(p+"/")).length;
+      pendingRestore = b;
+      if(box) box.innerHTML = `<div class="banner" style="display:grid;gap:8px">Replace everything on this device with the backup from ${esc(b.saved?new Date(b.saved).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}):"an earlier date")}? It has ${n("jobs")} jobs, ${n("customers")} customers and ${n("ledger")} expense/income entries.<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-hd="cancelRestore">Cancel</button><button class="btn primary" data-hd="doRestore">Replace with backup</button></span></div>`;
+    }catch(e){ pendingRestore = null; if(box) box.innerHTML = `<p class="sub" style="margin:0;color:var(--bad)">That file isn't a Haul Desk backup.</p>`; }
+  };
+  r.readAsText(file);
+}
+async function applyRestore(){
+  const b = pendingRestore; pendingRestore = null; if(!b) return;
+  toast("Restoring…");
+  try{
+    await LOCAL.tx("docs","readwrite", s=>{ s.clear(); for(const k in b.docs) s.put(b.docs[k], k); });
+    const blobs = {};
+    for(const id in (b.blobs||{})) blobs[id] = await (await fetch(b.blobs[id])).blob();
+    await LOCAL.tx("blobs","readwrite", s=>{ s.clear(); for(const id in blobs) s.put(blobs[id], id); });
+    location.reload();
+  }catch(e){ toast("Couldn't restore that backup. This device may be out of storage."); }
+}
+document.addEventListener("click", e=>{
+  const el = e.target.closest("[data-hd]"); if(!el) return;
+  const a = el.dataset.hd;
+  if(a==="backup") makeBackup();
+  else if(a==="cancelRestore"){ pendingRestore=null; const box=$("#hd-restore-box"); if(box) box.innerHTML=""; }
+  else if(a==="doRestore") applyRestore();
+});
+document.addEventListener("change", e=>{
+  if(e.target.id==="hd-restore"){ const f=e.target.files?.[0]; if(f) readRestore(f); e.target.value=""; }
+});
+
+/* ---------- boot ---------- */
+async function boot(){
+  render();
+  try{
+    const [docs, blobs] = await Promise.all([LOCAL.all("docs"), LOCAL.all("blobs")]);
+    Object.assign(DOCS, docs);
+    for(const id in blobs) BLOB_URLS[id] = URL.createObjectURL(blobs[id]);
+  }catch(e){
+    toast("This browser can't save data. Open the app in Safari or Chrome, not a private window.");
+    previewData(); state.loaded={jobs:true,customers:true,settings:true,ledger:true}; render(); return;
+  }
+  if(navigator.storage?.persist) navigator.storage.persist().catch(()=>{});
+  DB = LOCAL_DB; ASSETS = LOCAL_ASSETS; DOWNLOADS = LOCAL_DOWNLOADS; SAMPLE = null; state.live = true;
+  DB.collection("jobs").onSnapshot(s=>{ _dumpKey=null; state.jobs=s.docs.map(d=>({...d.data(), id:d.id})); state.loaded.jobs=true; render(); });
+  DB.collection("customers").onSnapshot(s=>{ state.customers=s.docs.map(d=>({...d.data(), id:d.id})); state.loaded.customers=true; render(); });
+  DB.collection("ledger").onSnapshot(s=>{ _dumpKey=null; state.ledger=s.docs.map(d=>({...d.data(), id:d.id})); state.loaded.ledger=true; render(); });
+  DB.doc("settings/main").onSnapshot(s=>{ if(s.exists){ state.settings={...structuredClone(DEFAULT_SETTINGS), ...structuredClone(s.data())}; } state.loaded.settings=true; render(); });
+  if("serviceWorker" in navigator && location.protocol==="https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+
+boot();
+</script>
+
+</body></html>
