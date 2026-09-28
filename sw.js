@@ -1,5 +1,5 @@
 // Offline support: the app shell is cached on install; fonts and the PDF library are cached the first time they load.
-const CACHE = 'haul-desk-v2';
+const CACHE = 'haul-desk-v3';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 const CDN = /(^|\.)(fonts\.googleapis\.com|fonts\.gstatic\.com|cdnjs\.cloudflare\.com)$/;
 

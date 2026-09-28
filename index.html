@@ -624,7 +624,7 @@ function schedCard(j){
     </button>
     <div class="acts">
       ${j.address?`<a class="btn sm" href="${mapUrl(j.address)}" target="_blank" rel="noopener">Directions</a>`:""}
-      ${c?.phone?`<button class="btn sm" data-act="copy" data-text="${esc(c.phone)}">Copy ${esc(c.phone)}</button>`:""}
+      ${c?.phone?`<a class="btn sm" href="tel:${esc(c.phone.replace(/[^\d+]/g,""))}">Call</a><a class="btn sm" href="sms:${esc(c.phone.replace(/[^\d+]/g,""))}">Text</a>`:""}
       <button class="btn sm" data-act="quickDone" data-id="${esc(j.id)}">Complete</button>
     </div>
   </div>`;
@@ -675,7 +675,8 @@ function viewCustomers(){
   list.sort((a,b)=>b.value-a.value || (a.c.name||"").localeCompare(b.c.name||""));
   const repeat = list.filter(x=>x.done.length>=2).length;
   return `<section class="sec">
-    <div class="toolbar"><h2>Customers</h2><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end"><input class="search" id="cust-q" type="search" placeholder="Search customers…" value="${esc(state.custQ)}"><button class="btn" data-act="newCust">+ Customer</button></div></div>
+    <div class="toolbar"><h2>Customers</h2><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end"><input class="search" id="cust-q" type="search" placeholder="Search customers…" value="${esc(state.custQ)}"><label class="btn filebtn">Import contacts<input type="file" id="imp-file" accept=".vcf,.csv,text/vcard,text/x-vcard,text/csv"></label><button class="btn" data-act="newCust">+ Customer</button></div></div>
+    <div id="imp-box">${typeof impHtml==="string"?impHtml:""}</div>
     <p class="sub" style="margin:0">${state.customers.length} customers · ${repeat} repeat · sorted by lifetime value</p>
     <div class="list">${list.length? list.map(x=>`<button class="card" data-act="openCust" data-id="${esc(x.c.id)}">
       <span class="r1"><span class="name">${esc(x.c.name)}</span><span class="num" style="font-weight:700">${money(x.value)}</span></span>
@@ -1655,6 +1656,121 @@ document.addEventListener("click", e=>{
 });
 document.addEventListener("change", e=>{
   if(e.target.id==="hd-restore"||e.target.id==="hd-restore-welcome"){ const f=e.target.files?.[0]; if(f) readRestore(f, e.target.id==="hd-restore-welcome"?"#hd-restore-box-welcome":"#hd-restore-box"); e.target.value=""; }
+});
+
+/* ---------- import contacts / call history from a phone app ----------
+   Reads a contacts file (.vcf) or a spreadsheet export (.csv) of contacts or call history. */
+function parseVcf(text){
+  const out = [];
+  const lines = text.replace(/\r\n[ \t]/g,"").replace(/\n[ \t]/g,"").split(/\r?\n/);
+  let cur = null;
+  const val = l => l.slice(l.indexOf(":")+1).replace(/\\,/g,",").replace(/\;/g,";").replace(/\\n/gi," ").trim();
+  for(const l of lines){
+    const key = l.split(":")[0].split(";")[0].toUpperCase().replace(/^ITEM\d+\./,"");
+    if(key==="BEGIN" && /VCARD/i.test(l)) cur = {name:"", phone:"", email:"", address:"", notes:""};
+    else if(key==="END" && cur){ out.push(cur); cur = null; }
+    else if(!cur) continue;
+    else if(key==="FN") cur.name = val(l);
+    else if(key==="N" && !cur.name){ const [last,firstN] = val(l).split(";"); cur.name = [firstN,last].filter(Boolean).join(" ").trim(); }
+    else if(key==="ORG" && !cur.name) cur.name = val(l).split(";")[0];
+    else if(key==="TEL" && !cur.phone) cur.phone = val(l).replace(/^tel:/i,"");
+    else if(key==="EMAIL" && !cur.email) cur.email = val(l);
+    else if(key==="ADR" && !cur.address){ const p = val(l).split(";"); cur.address = [p[2],p[3],[p[4],p[5]].filter(Boolean).join(" ")].filter(Boolean).join(", "); }
+    else if(key==="NOTE") cur.notes = val(l);
+  }
+  return out;
+}
+function parseCsvRows(text){
+  const rows = []; let row = [], f = "", q = false;
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){ f+='"'; i++; } else q=false; } else f+=ch; }
+    else if(ch==='"') q = true;
+    else if(ch===","){ row.push(f); f=""; }
+    else if(ch==="\n"||ch==="\r"){ if(ch==="\r"&&text[i+1]==="\n") i++; row.push(f); if(row.some(x=>x.trim())) rows.push(row); row=[]; f=""; }
+    else f+=ch;
+  }
+  row.push(f); if(row.some(x=>x.trim())) rows.push(row);
+  return rows;
+}
+function parseCsvContacts(text){
+  const rows = parseCsvRows(text.replace(/^﻿/,"")); if(rows.length<2) return [];
+  const h = rows[0].map(x=>x.trim().toLowerCase());
+  const find = (...res) => { for(const re of res){ const i = h.findIndex(x=>re.test(x)); if(i>=0) return i; } return -1; };
+  const iName = find(/^(display |full |contact |caller |customer )?name$/, /^contact$/, /name/);
+  const iFirst = find(/^first/), iLast = find(/^last/);
+  const iDir = find(/direction|type/);
+  const iFrom = find(/^from/), iTo = find(/^to( number)?$/);
+  const iPhone = find(/^phone( number)?$/, /mobile|cell/, /phone/, /^number$/, /number/, /caller/);
+  const iEmail = find(/e-?mail/);
+  const iAddr = find(/address|street/);
+  const iDate = find(/date|time|created/);
+  const iNote = find(/note|message|body|text/);
+  const g = (r,i) => i>=0 ? (r[i]||"").trim() : "";
+  return rows.slice(1).map(r=>{
+    let phone = g(r,iPhone);
+    if(iFrom>=0 && iTo>=0){ const outgoing = /out/i.test(g(r,iDir)); phone = outgoing ? g(r,iTo) : g(r,iFrom); }
+    const name = g(r,iName) || [g(r,iFirst),g(r,iLast)].filter(Boolean).join(" ");
+    return {name, phone, email:g(r,iEmail), address:g(r,iAddr), date:g(r,iDate), notes:g(r,iNote)};
+  });
+}
+let pendingContacts = null, impHtml = "";
+const setImp = h => { impHtml = h; const box = $("#imp-box"); if(box) box.innerHTML = h; };
+function readContacts(file){
+  const r = new FileReader();
+  r.onload = () => {
+    const text = String(r.result||"");
+    const raw = /BEGIN:VCARD/i.test(text) ? parseVcf(text) : parseCsvContacts(text);
+    const mine = digits(state.settings.phone);
+    const byNum = new Map();
+    for(const x of raw){
+      const d = digits(x.phone), e = (x.email||"").toLowerCase();
+      if(!x.name && !d && !e) continue;
+      if(d && d.length<7) continue;
+      if(d && mine && d===mine) continue;
+      const k = d || e || x.name.toLowerCase();
+      const prev = byNum.get(k);
+      if(!prev) byNum.set(k, {...x, calls:1});
+      else { prev.calls++; if(!prev.name && x.name) prev.name = x.name; if(!prev.email && x.email) prev.email = x.email; if(!prev.address && x.address) prev.address = x.address; }
+    }
+    const all = [...byNum.values()];
+    const exists = x => state.customers.some(c => (digits(x.phone) && digits(c.phone)===digits(x.phone)) || (x.email && c.email && c.email.toLowerCase()===x.email.toLowerCase()));
+    const fresh = all.filter(x=>!exists(x));
+    pendingContacts = fresh;
+    if(!all.length){ setImp(`<div class="banner">No names or phone numbers found in that file. Export your contacts as a .vcf or .csv file and try again.</div>`); return; }
+    setImp(`<div class="panel" style="display:grid;gap:10px">
+      <b>Found ${all.length} contact${all.length===1?"":"s"}: ${fresh.length} new, ${all.length-fresh.length} already in Haul Desk.</b>
+      ${fresh.length?`<div class="sub">${fresh.slice(0,8).map(x=>esc(x.name||x.phone||x.email)).join(" · ")}${fresh.length>8?` · and ${fresh.length-8} more`:""}</div>
+      <label class="check"><input type="checkbox" id="imp-leads"> Also add each one as a new lead to follow up</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-hd="impCancel">Cancel</button><button class="btn primary" data-hd="impGo">Add ${fresh.length} customer${fresh.length===1?"":"s"}</button></div>`
+      :`<div style="display:flex;gap:8px"><button class="btn" data-hd="impCancel">OK</button></div>`}
+    </div>`);
+  };
+  r.readAsText(file);
+}
+async function importContacts(){
+  const list = pendingContacts||[]; pendingContacts = null;
+  const leads = $("#imp-leads")?.checked; setImp("");
+  const now = new Date().toISOString();
+  let n = 0;
+  try{
+    for(const x of list){
+      const nameGuess = x.name || x.phone || x.email;
+      const c = {id:uid(), name:nameGuess, phone:x.phone||"", email:x.email||"", type:"Residential", address:x.address||"", source:"Phone call", notes:x.notes||"", createdAt:now};
+      await put("customers", c);
+      if(leads) await put("jobs", newDraft({customerId:c.id, address:c.address, notes:x.notes||"", followUp:today()}));
+      n++;
+    }
+    toast(`Added ${n} customer${n===1?"":"s"}${leads?" and leads":""}`);
+  }catch(e){ toast(`Added ${n}, then stopped. Check your storage and try again.`); }
+}
+document.addEventListener("click", e=>{
+  const el = e.target.closest("[data-hd]"); if(!el) return;
+  if(el.dataset.hd==="impCancel"){ pendingContacts=null; setImp(""); }
+  else if(el.dataset.hd==="impGo") importContacts();
+});
+document.addEventListener("change", e=>{
+  if(e.target.id==="imp-file"){ const f=e.target.files?.[0]; if(f) readContacts(f); e.target.value=""; }
 });
 
 /* ---------- boot ---------- */
